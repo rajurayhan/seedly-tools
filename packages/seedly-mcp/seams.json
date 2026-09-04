@@ -1,0 +1,237 @@
+{
+  "merges": [
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "seedlyMcpTables",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { seedlyMcpTables } from '../seedlyMcpSchema';",
+          "marker": "from '../seedlyMcpSchema'"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["...ghlImportTables,", "...goseedlyTables,", "..._m0.extensionTables,"],
+          "insert": "\n  ...seedlyMcpTables,",
+          "fallback": {
+            "after": "export const extensionTables = {",
+            "insert": "\n  ...seedlyMcpTables,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "SeedlyMCP",
+      "ops": [
+        {
+          "kind": "ensureContains",
+          "needle": "SeedlyMCP",
+          "insert": "// SeedlyMCP tables are merged here. Do not let any installer overwrite this file."
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/snapshot.ts",
+      "ifMissing": "'seedlyMcpGrants'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionPrivateTables: readonly string[] = [",
+          "insert": "\n  'seedlyMcpClients',\n  'seedlyMcpAuthCodes',\n  'seedlyMcpGrants',"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extensions.ts",
+      "ifMissing": "seedly-mcp/nav",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyMcp from './seedly-mcp/nav';",
+          "marker": "seedly-mcp/nav",
+          "preferAfter": "import * as _ghlImport from './ghl-import/nav';"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavItems: ExtensionNavItem[] = [",
+          "insert": "\n  ..._seedlyMcp.extensionNavItems,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavFeatureMap: Record<string, string> = {",
+          "insert": "\n  ..._seedlyMcp.extensionNavFeatureMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionSidebarSubjectMap: Record<string, Subjects> = {",
+          "insert": "\n  ..._seedlyMcp.extensionSidebarSubjectMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionRoutePermissions: { path: string; subject: Subjects }[] = [",
+          "insert": "\n  ..._seedlyMcp.extensionRoutePermissions,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-plan-features.ts",
+      "ifMissing": "key: 'seedly_mcp'",
+      "ops": [
+        {
+          "kind": "insertPlanFeature",
+          "feature": {
+            "key": "seedly_mcp",
+            "label": "SeedlyMCP",
+            "group": "Add-ons"
+          }
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-public-paths.ts",
+      "ifMissing": "'/seedly-mcp/'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionPublicPaths: readonly string[] = [",
+          "insert": "\n  '/seedly-mcp/',\n  '/.well-known/oauth-protected-resource',\n  '/.well-known/oauth-authorization-server',"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-subjects.ts",
+      "ifMissing": "seedly-mcp/subjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyMcp from './seedly-mcp/subjects';",
+          "marker": "seedly-mcp/subjects"
+        },
+        {
+          "kind": "replace",
+          "from": "export const extensionSubjects = [..._m0.extensionSubjects] as const;",
+          "to": "export const extensionSubjects = [..._m0.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyMcp.extensionSubjects",
+          "from": "..._m0.extensionSubjects]",
+          "to": "..._m0.extensionSubjects, ..._seedlyMcp.extensionSubjects]"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyMcp.extensionSubjects",
+          "from": "..._ghlImport.extensionSubjects] as const;",
+          "to": "..._ghlImport.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
+        }
+      ]
+    },
+    {
+      "file": "packages/shared/src/extensions.ts",
+      "ifMissing": "seedly-mcp/src/permissions",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyMcp from '../../seedly-mcp/src/permissions';",
+          "marker": "seedly-mcp/src/permissions"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["..._ghlImport.extensionPermissionModules,", "..._m0.extensionPermissionModules,"],
+          "insert": "\n  ..._seedlyMcp.extensionPermissionModules,",
+          "fallback": {
+            "after": "export const extensionPermissionModules: PermissionModuleDef[] = [",
+            "insert": "\n  ..._seedlyMcp.extensionPermissionModules,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/subjects.ts",
+      "ifMissing": "seedlyMcp/moduleSubjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyMcp from '../seedlyMcp/moduleSubjects';",
+          "marker": "seedlyMcp/moduleSubjects"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["..._ghlImport.extensionModuleSubjects,", "..._m0.extensionModuleSubjects,"],
+          "insert": "\n  ..._seedlyMcp.extensionModuleSubjects,",
+          "fallback": {
+            "after": "export const extensionModuleSubjects: Record<string, string> = {",
+            "insert": "\n  ..._seedlyMcp.extensionModuleSubjects,"
+          }
+        }
+      ]
+    }
+  ],
+  "uninstall": {
+    "stripLines": [
+      {
+        "file": "convex/extensions/index.ts",
+        "pattern": "seedlyMcp|seedly-mcp|seedly_mcp|SeedlyMCP"
+      },
+      {
+        "file": "convex/extensions/snapshot.ts",
+        "pattern": "seedlyMcp"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "pattern": "seedly-mcp|_seedlyMcp"
+      },
+      {
+        "file": "apps/web/lib/extension-subjects.ts",
+        "pattern": "seedly-mcp|_seedlyMcp"
+      },
+      {
+        "file": "apps/web/lib/extension-public-paths.ts",
+        "pattern": "seedly-mcp|oauth-protected-resource|oauth-authorization-server"
+      },
+      {
+        "file": "packages/shared/src/extensions.ts",
+        "pattern": "seedly-mcp|_seedlyMcp"
+      },
+      {
+        "file": "convex/extensions/subjects.ts",
+        "pattern": "seedlyMcp|_seedlyMcp"
+      }
+    ],
+    "stripPlanFeatures": [
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "key": "seedly_mcp"
+      }
+    ]
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "needle": "key: 'seedly_mcp'",
+        "message": "plan features include seedly_mcp"
+      },
+      {
+        "file": "packages/seedly-mcp/server.mjs",
+        "needle": "Local SeedlyMCP",
+        "message": "stdio server is present"
+      },
+      {
+        "file": "convex/seedlyMcp/oauthMetadata.ts",
+        "needle": "client_id_metadata_document_supported",
+        "message": "OAuth discovery advertises CIMD"
+      },
+      {
+        "file": "apps/web/lib/extension-public-paths.ts",
+        "needle": "/seedly-mcp/",
+        "message": "public paths include /seedly-mcp/"
+      }
+    ],
+    "zeroImport": [
+      "apps/web/lib/extension-plan-features.ts",
+      "apps/web/lib/extension-public-paths.ts"
+    ]
+  }
+}

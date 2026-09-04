@@ -189,4 +189,6 @@ Do not expose these as tools until the native agent’s confirm step exists, or 
 
 ## When this sheet is done
 
-Build the zip. Then update [seedly-mcp.md](seedly-mcp.md) status from Planned to On the shelf.
+Built. Pack: `node scripts/pack.mjs seedly-mcp` → `dist/seedly-mcp-0.1.0.zip`. [seedly-mcp.md](seedly-mcp.md) is On the shelf.
+
+Remote MCP + OAuth discovery hang on the Next.js public-path seam (`/seedly-mcp/`, `/.well-known/...`). Stock Seedly 5.8 has no Convex HTTP registry for add-ons — that is a recorded seam gap. Do not patch `convex/http.ts`.

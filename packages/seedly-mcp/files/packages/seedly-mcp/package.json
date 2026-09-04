@@ -1,0 +1,7 @@
+{
+  "name": "@seedly-crm/seedly-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./server.mjs"
+}

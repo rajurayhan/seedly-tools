@@ -9,7 +9,7 @@ Do not add SKUs here that are not on this list.
 ## Phase order
 
 1. [HighLevel import](ghl-import.md) — on the shelf
-2. [SeedlyMCP](seedly-mcp.md) — next zip ([build sheet](seedly-mcp-build.md))
+2. [SeedlyMCP](seedly-mcp.md) — on the shelf ([build sheet](seedly-mcp-build.md))
 3. [SeedlyPin](seedly-pin.md) — hosted Pins plus a thin widget zip
 4. [Login As](login-as.md) — agency owner opens a location as that user
 5. [Native agent](native-agent.md) — dashboard helper that only uses SeedlyMCP
@@ -25,7 +25,7 @@ What we will not sell: [Out of scope](out-of-scope.md).
 | --- | --- | --- | --- |
 | Factory (toolkit) | — | Vendored into every zip | Built |
 | HighLevel import | 0 | Zip | On the shelf |
-| SeedlyMCP | 1 | Zip | Planned |
+| SeedlyMCP | 1 | Zip | On the shelf |
 | SeedlyPin | 2 | Hosted + thin zip | Planned |
 | Login As (agency) | 3 | Zip | Planned |
 | Native agent | 4 | Zip | Planned |
