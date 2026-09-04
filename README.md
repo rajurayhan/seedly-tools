@@ -7,7 +7,22 @@ Installable add-ons for licensed **Seedly 5.8.x** owners. This repo is not a CRM
 - **Us:** build and pack add-ons here.
 - **Buyers:** already own Seedly 5.8. They unzip one add-on and run its installer. They never clone this monorepo.
 
-## Packages
+## Catalog
+
+Every planned item is written up in [docs/](docs/README.md).
+
+| Item | Status |
+| --- | --- |
+| [Factory](docs/factory.md) | Built (`packages/toolkit`) |
+| [HighLevel import](docs/ghl-import.md) | On the shelf (`packages/ghl-import`) |
+| [SeedlyMCP](docs/seedly-mcp.md) | Planned — next zip |
+| [SeedlyPin](docs/seedly-pin.md) | Planned — hosted + thin zip |
+| [Login As](docs/login-as.md) | Planned — agency only |
+| [Native agent](docs/native-agent.md) | Planned — after SeedlyMCP |
+| [Connectors](docs/connectors.md) | Planned — named system, not “OAuth” |
+| [Out of scope](docs/out-of-scope.md) | Will not sell |
+
+## Packages on disk today
 
 | Package | What a buyer gets |
 | --- | --- |
