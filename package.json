@@ -1,0 +1,10 @@
+{
+  "name": "sulus-crm-add-ons",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test packages/toolkit/src/__tests__/*.test.mjs",
+    "pack": "node scripts/pack.mjs",
+    "pack:ghl-import": "node scripts/pack.mjs ghl-import"
+  }
+}

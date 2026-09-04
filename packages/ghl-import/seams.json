@@ -1,0 +1,230 @@
+{
+  "merges": [
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "ghlImportTables",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { ghlImportTables } from '../ghlImportSchema';",
+          "marker": "from '../ghlImportSchema'"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["...goseedlyTables,", "..._m0.extensionTables,"],
+          "insert": "\n  ...ghlImportTables,",
+          "fallback": {
+            "after": "export const extensionTables = {",
+            "insert": "\n  ...ghlImportTables,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "HighLevel import",
+      "ops": [
+        {
+          "kind": "ensureContains",
+          "needle": "HighLevel import",
+          "insert": "// HighLevel import tables are merged here. Do not let any installer overwrite this file."
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/snapshot.ts",
+      "ifMissing": "'ghlConnections'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionPrivateTables: readonly string[] = [",
+          "insert": "\n  'ghlConnections',\n  'ghlImportJobs',\n  'ghlIdMappings',"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extensions.ts",
+      "ifMissing": "ghl-import/nav",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _ghlImport from './ghl-import/nav';",
+          "marker": "ghl-import/nav",
+          "preferAfter": "import * as _m0 from './dispatch/nav';"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavItems: ExtensionNavItem[] = [",
+          "insert": "\n  ..._ghlImport.extensionNavItems,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavFeatureMap: Record<string, string> = {",
+          "insert": "\n  ..._ghlImport.extensionNavFeatureMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionSidebarSubjectMap: Record<string, Subjects> = {",
+          "insert": "\n  ..._ghlImport.extensionSidebarSubjectMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionRoutePermissions: { path: string; subject: Subjects }[] = [",
+          "insert": "\n  ..._ghlImport.extensionRoutePermissions,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-plan-features.ts",
+      "ifMissing": "key: 'ghl_import'",
+      "ops": [
+        {
+          "kind": "insertPlanFeature",
+          "feature": {
+            "key": "ghl_import",
+            "label": "HighLevel import",
+            "group": "Add-ons"
+          }
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-subjects.ts",
+      "ifMissing": "ghl-import/subjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _ghlImport from './ghl-import/subjects';",
+          "marker": "ghl-import/subjects"
+        },
+        {
+          "kind": "replace",
+          "from": "export const extensionSubjects = [..._m0.extensionSubjects] as const;",
+          "to": "export const extensionSubjects = [..._m0.extensionSubjects, ..._ghlImport.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_ghlImport.extensionSubjects",
+          "from": "..._m0.extensionSubjects]",
+          "to": "..._m0.extensionSubjects, ..._ghlImport.extensionSubjects]"
+        }
+      ]
+    },
+    {
+      "file": "packages/shared/src/extensions.ts",
+      "ifMissing": "ghl-import/src/permissions",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _ghlImport from '../../ghl-import/src/permissions';",
+          "marker": "ghl-import/src/permissions"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "..._m0.extensionPermissionModules,",
+          "insert": "\n  ..._ghlImport.extensionPermissionModules,"
+        }
+      ]
+    },
+    {
+      "file": "packages/shared/src/extensions-guards.ts",
+      "ifMissing": "ghl-import/src/guards",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _ghlImport from '../../ghl-import/src/guards';",
+          "marker": "ghl-import/src/guards"
+        },
+        {
+          "kind": "replace",
+          "from": "= _m0.extensionGuardAllowlist;",
+          "to": "= {\n  ..._m0.extensionGuardAllowlist,\n  'two-factor-action-enforcement': [\n    ...(_m0.extensionGuardAllowlist['two-factor-action-enforcement'] ?? []),\n    ...(_ghlImport.extensionGuardAllowlist['two-factor-action-enforcement'] ?? []),\n  ],\n};"
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/subjects.ts",
+      "ifMissing": "ghlImport/moduleSubjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _ghlImport from '../ghlImport/moduleSubjects';",
+          "marker": "ghlImport/moduleSubjects"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "..._m0.extensionModuleSubjects,",
+          "insert": "\n  ..._ghlImport.extensionModuleSubjects,"
+        }
+      ]
+    }
+  ],
+  "uninstall": {
+    "stripLines": [
+      {
+        "file": "convex/extensions/index.ts",
+        "pattern": "ghlImport|ghl-import|ghl_import|ghlConnections|ghlImportJobs|ghlIdMappings|HighLevel import"
+      },
+      {
+        "file": "convex/extensions/snapshot.ts",
+        "pattern": "ghlImport|ghl-import|ghl_import|ghlConnections|ghlImportJobs|ghlIdMappings|HighLevel import"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "pattern": "ghl-import|_m3\\.|_ghlImport"
+      },
+      {
+        "file": "apps/web/lib/extension-subjects.ts",
+        "pattern": "ghl-import|_m1\\.|_ghlImport"
+      },
+      {
+        "file": "packages/shared/src/extensions.ts",
+        "pattern": "ghl-import|_m1\\.|_ghlImport"
+      },
+      {
+        "file": "packages/shared/src/extensions-guards.ts",
+        "pattern": "ghl-import|_m1\\.|_ghlImport"
+      },
+      {
+        "file": "convex/extensions/subjects.ts",
+        "pattern": "ghlImport|_m1\\.|_ghlImport"
+      }
+    ],
+    "stripPlanFeatures": [
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "key": "ghl_import"
+      }
+    ]
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "convex/extensions/index.ts",
+        "needle": "ghlImportTables",
+        "message": "extensions/index.ts spreads ghlImportTables"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "needle": "ghl-import/nav",
+        "message": "extensions.ts imports ghl-import nav"
+      },
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "needle": "key: 'ghl_import'",
+        "message": "plan features include ghl_import"
+      }
+    ],
+    "zeroImport": ["apps/web/lib/extension-plan-features.ts"],
+    "noImportOf": {
+      "pattern": "goseedly",
+      "message": "add-on sources do not import GoSeedly",
+      "files": [
+        "convex/ghlImport/api.ts",
+        "convex/ghlImport/internal.ts",
+        "convex/actions/ghl.ts",
+        "packages/ghl-import/src/client.ts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "modules": [
+    {
+      "name": "dispatch",
+      "version": "1.0.1",
+      "extensionApiVersion": 1,
+      "ownedFiles": ["convex/dispatch/jobs.ts"]
+    }
+  ]
+}

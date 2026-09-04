@@ -1,0 +1,10 @@
+{
+  "id": "ghl_contact_1",
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada@example.com",
+  "phone": "+15551234567",
+  "tags": ["vip", "newsletter"],
+  "customFields": [{ "id": "cf_city", "field_value": "London" }],
+  "source": "ghl"
+}

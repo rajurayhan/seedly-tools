@@ -1,0 +1,63 @@
+{
+  "merges": [
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "miniTables",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { miniTables } from '../miniSchema';",
+          "marker": "from '../miniSchema'"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "..._m0.extensionTables,",
+          "insert": "\n  ...miniTables,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-plan-features.ts",
+      "ifMissing": "key: 'mini'",
+      "ops": [
+        {
+          "kind": "insertPlanFeature",
+          "feature": {
+            "key": "mini",
+            "label": "Mini",
+            "group": "Add-ons"
+          }
+        }
+      ]
+    }
+  ],
+  "uninstall": {
+    "stripLines": [
+      {
+        "file": "convex/extensions/index.ts",
+        "pattern": "miniTables|miniSchema"
+      }
+    ],
+    "stripPlanFeatures": [
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "key": "mini"
+      }
+    ]
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "convex/extensions/index.ts",
+        "needle": "miniTables",
+        "message": "extensions/index.ts spreads miniTables"
+      },
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "needle": "key: 'mini'",
+        "message": "plan features include mini"
+      }
+    ],
+    "zeroImport": ["apps/web/lib/extension-plan-features.ts"]
+  }
+}
