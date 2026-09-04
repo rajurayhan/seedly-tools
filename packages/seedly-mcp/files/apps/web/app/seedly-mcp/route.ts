@@ -14,8 +14,25 @@ export function OPTIONS() {
 
 export async function GET(request: Request) {
   const origin = publicOrigin(request);
-  const auth = request.headers.get('authorization');
-  if (!auth) return unauthorized(origin);
+  const accept = request.headers.get('accept') ?? '';
+  // Cursor probes GET first. Do not 401 here — WWW-Authenticate makes it start
+  // OAuth and ignore the static API key header. Auth stays on POST.
+  if (accept.includes('text/event-stream') && !accept.includes('application/json')) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(': connected\n\n'));
+      },
+    });
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+        ...corsHeaders(),
+      },
+    });
+  }
   return json({
     name: 'seedly-mcp',
     version: '0.1.0',

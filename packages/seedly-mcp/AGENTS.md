@@ -72,7 +72,7 @@ Enable **SeedlyMCP** on the location’s plan (Admin → Plans → Add-ons). Sid
 | Host file | Append |
 | --- | --- |
 | `apps/web/lib/extension-plan-features.ts` | `{ key: 'seedly_mcp', label: 'SeedlyMCP', group: 'Add-ons' }` (zero-import) |
-| `apps/web/lib/extension-public-paths.ts` | `/seedly-mcp/`, `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` (zero-import) |
+| `apps/web/lib/extension-public-paths.ts` | `/seedly-mcp` (no trailing slash — host matching only treats `/seedly-mcp/` as the subtree), `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` (zero-import) |
 | `apps/web/lib/extensions.ts` | nav / feature map / subjects / route permissions |
 | `apps/web/lib/extension-subjects.ts` | `Seedly_mcp` |
 | `packages/shared/src/extensions.ts` | permission module `seedly_mcp` |

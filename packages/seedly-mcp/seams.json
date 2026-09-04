@@ -90,12 +90,12 @@
     },
     {
       "file": "apps/web/lib/extension-public-paths.ts",
-      "ifMissing": "'/seedly-mcp/'",
+      "ifMissing": "'/seedly-mcp'",
       "ops": [
         {
           "kind": "insertAfter",
           "after": "export const extensionPublicPaths: readonly string[] = [",
-          "insert": "\n  '/seedly-mcp/',\n  '/.well-known/oauth-protected-resource',\n  '/.well-known/oauth-authorization-server',"
+          "insert": "\n  '/seedly-mcp',\n  '/.well-known/oauth-protected-resource',\n  '/.well-known/oauth-authorization-server',"
         }
       ]
     },
@@ -231,8 +231,8 @@
       },
       {
         "file": "apps/web/lib/extension-public-paths.ts",
-        "needle": "/seedly-mcp/",
-        "message": "public paths include /seedly-mcp/"
+        "needle": "'/seedly-mcp'",
+        "message": "public paths include /seedly-mcp (exact entry, so the bare URL is public)"
       }
     ],
     "zeroImport": [
