@@ -18,7 +18,7 @@ Licensed Seedly 5.8.x owners leaving GoHighLevel.
 
 Pack: `node scripts/pack.mjs ghl-import` → `dist/ghl-import-0.1.0.zip`.
 
-Buyer install: see the zip [README](../packages/ghl-import/README.md) and [Factory](factory.md).
+Buyer install: owners use [INSTALL.md](../packages/ghl-import/INSTALL.md). Agents use [AGENTS.md](../packages/ghl-import/AGENTS.md). Also [README](../packages/ghl-import/README.md) and [Factory](factory.md).
 
 ## What it is not
 

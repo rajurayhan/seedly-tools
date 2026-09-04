@@ -124,6 +124,12 @@
           "needle": "_seedlyMcp.extensionSubjects",
           "from": "..._ghlImport.extensionSubjects] as const;",
           "to": "..._ghlImport.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyMcp.extensionSubjects",
+          "from": "..._m1.extensionSubjects] as const;",
+          "to": "..._m1.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
         }
       ]
     },

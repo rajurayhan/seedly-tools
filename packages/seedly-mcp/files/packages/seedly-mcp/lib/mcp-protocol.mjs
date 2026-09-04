@@ -58,7 +58,7 @@ export async function handleJsonRpc(message, exec) {
   }
 }
 
-export function apiExecutor({ baseUrl, apiKey, fetchImpl }) {
+export function apiExecutor({ baseUrl, apiKey, fetchImpl = fetch }) {
   return (request) =>
     callSeedlyApi({
       baseUrl,

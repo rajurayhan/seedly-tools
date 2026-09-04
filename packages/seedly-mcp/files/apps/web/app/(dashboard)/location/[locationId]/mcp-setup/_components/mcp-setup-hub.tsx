@@ -8,8 +8,10 @@ import { Button } from '@seedly-crm/ui';
 const listGrantsRef = makeFunctionReference<'query'>('seedlyMcp/api:listGrants');
 const revokeGrantRef = makeFunctionReference<'mutation'>('seedlyMcp/api:revokeGrant');
 
+type GrantRow = { _id: string; clientId: string; createdAt: number; expiresAt: number };
+
 export function McpSetupHub() {
-  const grants = useQuery(listGrantsRef);
+  const grants = useQuery(listGrantsRef) as GrantRow[] | undefined;
   const revoke = useMutation(revokeGrantRef);
   const origin = useMemo(() => (typeof window === 'undefined' ? '' : window.location.origin), []);
   const mcpUrl = origin ? `${origin}/seedly-mcp` : 'https://YOUR_SEEDLY_URL/seedly-mcp';

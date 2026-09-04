@@ -46,3 +46,5 @@ Seedly already has `/api/v1`. MCP is not in the CRM today. This zip is the door.
 ## Build sheet
 
 Phase 1 detail (tools, seams, buyer Cursor config): [seedly-mcp-build.md](seedly-mcp-build.md). Pack: `node scripts/pack.mjs seedly-mcp` → `dist/seedly-mcp-0.1.0.zip`.
+
+Install: owners use [INSTALL.md](../packages/seedly-mcp/INSTALL.md). Agents use [AGENTS.md](../packages/seedly-mcp/AGENTS.md).

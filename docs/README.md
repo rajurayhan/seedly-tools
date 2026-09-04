@@ -15,7 +15,7 @@ Do not add SKUs here that are not on this list.
 5. [Native agent](native-agent.md) — dashboard helper that only uses SeedlyMCP
 6. [Connectors](connectors.md) — first named outbound system, not a generic OAuth kit
 
-How we pack and install: [Factory](factory.md).
+How we pack and install: [Factory](factory.md). Owner steps: [install-owners.md](install-owners.md). Agent playbook: [install-agents.md](install-agents.md).
 
 What we will not sell: [Out of scope](out-of-scope.md).
 

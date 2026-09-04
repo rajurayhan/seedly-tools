@@ -41,6 +41,8 @@ node scripts/pack.mjs seedly-mcp
 
 Writes `dist/<sku>-<version>.zip`. The zip includes the toolkit so the buyer does not need this repo.
 
+Owner walkthrough: [docs/install-owners.md](docs/install-owners.md). Agent playbook: [docs/install-agents.md](docs/install-agents.md).
+
 ## How a buyer installs
 
 1. Unzip the add-on.

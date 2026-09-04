@@ -4,7 +4,6 @@ import {
   resolveBearerRef,
   seedlyMcpConvex,
 } from '@/lib/seedly-mcp/convex-http';
-// @ts-expect-error vendored add-on ESM
 import { handleJsonRpc, apiExecutor, initializeResult } from '../../../../packages/seedly-mcp/lib/mcp-protocol.mjs';
 
 export const dynamic = 'force-dynamic';

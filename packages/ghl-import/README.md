@@ -4,6 +4,9 @@ Install this into a licensed **Seedly 5.8.x** folder. It adds a sidebar **Import
 
 This zip is not a CRM. It will not run on its own.
 
+- **Owner (not a programmer):** start at [INSTALL.md](INSTALL.md)
+- **AI agent doing the install:** start at [AGENTS.md](AGENTS.md)
+
 ## Install
 
 1. Unzip this folder somewhere you can find it.
