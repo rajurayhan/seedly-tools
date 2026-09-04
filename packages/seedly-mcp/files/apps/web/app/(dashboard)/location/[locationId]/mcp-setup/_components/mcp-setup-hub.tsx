@@ -16,6 +16,18 @@ export function McpSetupHub() {
   const origin = useMemo(() => (typeof window === 'undefined' ? '' : window.location.origin), []);
   const mcpUrl = origin ? `${origin}/seedly-mcp` : 'https://YOUR_SEEDLY_URL/seedly-mcp';
   const serverPath = 'packages/seedly-mcp/server.mjs';
+  const liveCursorJson = `{
+  "mcpServers": {
+    "seedly": {
+      "url": "${mcpUrl}",
+      "headers": {
+        "Authorization": "Bearer sk_live_..."
+      }
+    }
+  }
+}`;
+  const liveHeaderSnippet = `URL: ${mcpUrl}
+Authorization: Bearer sk_live_...`;
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
@@ -31,8 +43,12 @@ export function McpSetupHub() {
         <h2 className="text-lg font-medium">Cursor / Claude Desktop</h2>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           <li>Settings → Integrations → API Keys → Create Key. Copy it once.</li>
-          <li>Paste this into Cursor MCP settings. Put the real path to your Seedly folder.</li>
+          <li>Paste one of the snippets below into Cursor MCP settings.</li>
         </ol>
+        <h3 className="text-sm font-medium">Local program</h3>
+        <p className="text-sm text-muted-foreground">
+          Runs a file on this machine. Put the real path to your Seedly folder.
+        </p>
         <pre className="overflow-x-auto rounded-md border bg-muted/40 p-4 text-xs">
           {`{
   "mcpServers": {
@@ -50,6 +66,13 @@ export function McpSetupHub() {
         <p className="text-xs text-muted-foreground">
           The key stays in that env file. This page never prints it back.
         </p>
+        <h3 className="text-sm font-medium">Live URL</h3>
+        <p className="text-sm text-muted-foreground">
+          Points Cursor at this website. Replace the placeholder key with the one you copied.
+        </p>
+        <pre className="overflow-x-auto rounded-md border bg-muted/40 p-4 text-xs">
+          {liveCursorJson}
+        </pre>
       </section>
 
       <section className="space-y-3">
@@ -65,11 +88,14 @@ export function McpSetupHub() {
             <code className="rounded bg-muted px-1">https://claude.ai/api/mcp/auth_callback</code>
           </li>
         </ol>
+        <h3 className="text-sm font-medium">Live URL (static header)</h3>
         <p className="text-sm text-muted-foreground">
-          If OAuth fails, add the connector with a request header{' '}
-          <code className="rounded bg-muted px-1">Authorization: Bearer sk_live_...</code> instead.
-          That is Claude’s static-header option.
+          If sign-in fails, add the connector with this URL and request header instead. Replace the
+          placeholder key with the one you copied.
         </p>
+        <pre className="overflow-x-auto rounded-md border bg-muted/40 p-4 text-xs">
+          {liveHeaderSnippet}
+        </pre>
       </section>
 
       <section className="space-y-3">
