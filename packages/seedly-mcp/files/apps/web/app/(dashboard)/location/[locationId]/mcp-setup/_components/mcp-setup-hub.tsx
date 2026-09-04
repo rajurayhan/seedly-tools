@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { makeFunctionReference } from 'convex/server';
 import { Button } from '@seedly-crm/ui';
+import { McpToolCatalog } from './mcp-tool-catalog';
 
 const listGrantsRef = makeFunctionReference<'query'>('seedlyMcp/api:listGrants');
 const revokeGrantRef = makeFunctionReference<'mutation'>('seedlyMcp/api:revokeGrant');
@@ -123,6 +124,8 @@ Authorization: Bearer sk_live_...`;
           </ul>
         )}
       </section>
+
+      <McpToolCatalog />
     </div>
   );
 }

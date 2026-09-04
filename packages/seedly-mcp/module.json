@@ -6,6 +6,7 @@
   "ownedFiles": [
     "apps/web/app/(dashboard)/location/[locationId]/mcp-setup/page.tsx",
     "apps/web/app/(dashboard)/location/[locationId]/mcp-setup/_components/mcp-setup-hub.tsx",
+    "apps/web/app/(dashboard)/location/[locationId]/mcp-setup/_components/mcp-tool-catalog.tsx",
     "apps/web/app/.well-known/oauth-authorization-server/route.ts",
     "apps/web/app/.well-known/oauth-protected-resource/route.ts",
     "apps/web/app/seedly-mcp/route.ts",
@@ -19,6 +20,7 @@
     "apps/web/lib/seedly-mcp/oauth-reexport.ts",
     "apps/web/lib/seedly-mcp/origin.ts",
     "apps/web/lib/seedly-mcp/subjects.ts",
+    "apps/web/lib/seedly-mcp/tool-catalog.ts",
     "convex/seedlyMcp/api.ts",
     "convex/seedlyMcp/crypto.ts",
     "convex/seedlyMcp/http.ts",
@@ -33,6 +35,7 @@
     "packages/seedly-mcp/lib/mcp-protocol.mjs",
     "packages/seedly-mcp/lib/oauth-metadata.mjs",
     "packages/seedly-mcp/lib/stdio.mjs",
+    "packages/seedly-mcp/lib/tool-groups.mjs",
     "packages/seedly-mcp/lib/tools.mjs",
     "packages/seedly-mcp/src/guards.ts",
     "packages/seedly-mcp/src/permissions.ts"

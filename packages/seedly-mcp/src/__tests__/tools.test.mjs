@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BLOCKED_V1_TOOLS, TOOLS, getTool, toolRoute, resolveRequest } from '../../files/packages/seedly-mcp/lib/tools.mjs';
+import { catalogCoverage } from '../../files/packages/seedly-mcp/lib/tool-groups.mjs';
 
 const EXPECTED = {
   list_contacts: ['GET', '/api/v1/contacts'],
@@ -42,6 +43,13 @@ test('every v1 tool maps to one /api/v1 method + path', () => {
     assert.equal(route.method, method, name);
     assert.equal(route.path, path, name);
   }
+});
+
+test('setup page groups cover every shipped tool exactly once', () => {
+  const { missing, extra, duplicates } = catalogCoverage(TOOLS);
+  assert.deepEqual(missing, []);
+  assert.deepEqual(extra, []);
+  assert.deepEqual(duplicates, []);
 });
 
 test('blocked send/money tools are not in the catalog', () => {
