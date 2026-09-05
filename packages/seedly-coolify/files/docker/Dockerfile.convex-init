@@ -1,0 +1,8 @@
+# Coolify-only. Do not put this stage in docker/Dockerfile — Coolify injects
+# empty --build-arg CONVEX_BACKEND_TAG into every stage and blanks ARG-in-FROM.
+# Pin the tag here (not an ARG) so the reference cannot become
+# ghcr.io/get-convex/convex-backend:
+FROM ghcr.io/get-convex/convex-backend:latest
+COPY docker/convex-init-entrypoint.sh /usr/local/bin/convex-init-entrypoint.sh
+USER 0
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/convex-init-entrypoint.sh"]

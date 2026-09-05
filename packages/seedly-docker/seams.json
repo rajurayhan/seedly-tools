@@ -1,0 +1,26 @@
+{
+  "merges": [],
+  "uninstall": {
+    "stripLines": [],
+    "stripPlanFeatures": []
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "compose.yaml",
+        "needle": "name: seedly-crm",
+        "message": "compose.yaml is the Seedly Docker stack"
+      },
+      {
+        "file": "apps/web/lib/seedly-docker/convex-urls.ts",
+        "needle": "getServerConvexUrl",
+        "message": "self-host Convex URL helper is present"
+      },
+      {
+        "file": "apps/web/lib/seedly-docker/connect-src.ts",
+        "needle": "connectSrcForConfiguredConvex",
+        "message": "self-host CSP helper is present"
+      }
+    ]
+  }
+}

@@ -1,0 +1,143 @@
+# seedly-crm — Coolify / VPS stack (self-hosted Convex, no Convex Cloud)
+#
+# Local laptop: use compose.yaml (make -f docker.mk docker-up), not this file.
+# Coolify: Docker Compose resource → this file. Do not attach any service
+# to the Coolify instance hostname (your Coolify hostname).
+#
+# Public URLs come only from env (see .env.coolify.example). Assign temporary
+# FQDNs in Coolify, paste them into those vars, then rebuild if they change.
+#
+# Coolify domain mapping (container ports — do not publish them on the host):
+#   web               → HTTPS FQDN, port 3000
+#   convex-backend    → two HTTPS FQDNs, ports 3210 (API) and 3211 (site)
+#   convex-dashboard  → HTTPS FQDN, port 6791 + Basic Auth
+#   convex-init / convex-sync → no public domain (init is a built image, not a bind-mount)
+#
+# Do not declare networks here — Coolify adds its own.
+
+name: seedly-crm
+
+services:
+  convex-backend:
+    image: ghcr.io/get-convex/convex-backend:${CONVEX_BACKEND_TAG:-latest}
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    expose:
+      - "3210"
+      - "3211"
+    volumes:
+      - convex-data:/convex/data
+    environment:
+      INSTANCE_NAME: ${INSTANCE_NAME:-seedly-crm-staging}
+      INSTANCE_SECRET: ${INSTANCE_SECRET:?Set INSTANCE_SECRET in Coolify env}
+      CONVEX_CLOUD_ORIGIN: ${CONVEX_CLOUD_ORIGIN:?Set CONVEX_CLOUD_ORIGIN to the public HTTPS URL for port 3210}
+      CONVEX_SITE_ORIGIN: ${CONVEX_SITE_ORIGIN:?Set CONVEX_SITE_ORIGIN to the public HTTPS URL for port 3211}
+      DISABLE_BEACON: ${DISABLE_BEACON:-true}
+      RUST_LOG: ${RUST_LOG:-info}
+      DOCUMENT_RETENTION_DELAY: ${DOCUMENT_RETENTION_DELAY:-172800}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+
+  convex-dashboard:
+    image: ghcr.io/get-convex/convex-dashboard:${CONVEX_BACKEND_TAG:-latest}
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    expose:
+      - "6791"
+    environment:
+      NEXT_PUBLIC_DEPLOYMENT_URL: ${NEXT_PUBLIC_DEPLOYMENT_URL:?Set NEXT_PUBLIC_DEPLOYMENT_URL to the public HTTPS Convex API URL}
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  convex-init:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.convex-init
+    user: "0"
+    environment:
+      INSTANCE_NAME: ${INSTANCE_NAME:-seedly-crm-staging}
+      INSTANCE_SECRET: ${INSTANCE_SECRET:?Set INSTANCE_SECRET in Coolify env}
+    volumes:
+      - convex-keys:/keys
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    restart: "no"
+
+  convex-sync:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: sync
+    init: true
+    environment:
+      CONVEX_SYNC_ONCE: "1"
+      CONVEX_SELF_HOSTED_URL: http://convex-backend:3210
+      SITE_URL: ${SITE_URL:?Set SITE_URL to the public HTTPS app URL}
+      FRONTEND_URL: ${FRONTEND_URL:?Set FRONTEND_URL to the public HTTPS app URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?Set NEXT_PUBLIC_APP_URL to the public HTTPS app URL}
+      INTERNAL_APP_URL: ${INTERNAL_APP_URL:-http://web:3000}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
+      UNSUBSCRIBE_SECRET: ${UNSUBSCRIBE_SECRET:-}
+      PREFERENCES_SECRET: ${PREFERENCES_SECRET:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:-}
+      SEED_OWNER_PASSWORD: ${SEED_OWNER_PASSWORD:-}
+    volumes:
+      - convex-keys:/keys:ro
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+      convex-init:
+        condition: service_completed_successfully
+    entrypoint: ["/usr/local/bin/convex-sync-entrypoint.sh"]
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: prod
+      args:
+        NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:?Set NEXT_PUBLIC_CONVEX_URL to the public HTTPS Convex API URL}
+        NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL:?Set NEXT_PUBLIC_CONVEX_SITE_URL to the public HTTPS Convex site URL}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?Set NEXT_PUBLIC_APP_URL to the public HTTPS app URL}
+    init: true
+    shm_size: "1gb"
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL}
+      NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL}
+      CONVEX_URL: http://convex-backend:3210
+      CONVEX_SITE_URL: http://convex-backend:3211
+      SITE_URL: ${SITE_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:-}
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+      convex-sync:
+        condition: service_completed_successfully
+    command: ["pnpm", "--filter", "@seedly-crm/web", "start"]
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 180s
+    restart: unless-stopped
+
+volumes:
+  convex-data:
+  convex-keys:
