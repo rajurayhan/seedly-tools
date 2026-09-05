@@ -195,7 +195,7 @@ test('seedly-mcp installs on the fixture host and doctor passes', () => {
     assert.match(plan, /label: 'SeedlyMCP'/);
     assert.equal(/^\s*import\s/m.test(plan), false);
     const paths = read(checkout, 'apps/web/lib/extension-public-paths.ts');
-    assert.match(paths, /\/seedly-mcp\//);
+    assert.match(paths, /'\/seedly-mcp'/);
     assert.equal(/^\s*import\s/m.test(paths), false);
     assert.equal(existsSync(join(checkout, 'packages/seedly-mcp/server.mjs')), true);
     assert.equal(existsSync(join(checkout, 'convex/http.ts')), false);

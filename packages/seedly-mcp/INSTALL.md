@@ -127,6 +127,27 @@ If that sign-in cannot start, add the connector with a request header instead:
 
 (that is Claude’s backup “static header” option). Create that key the same way as in step 5.
 
+## After you change the public API
+
+The assistant’s tool list is built from a file in **your Seedly folder** named `docs/openapi.yaml`. That is the written list of public API doors. It is not inside this zip.
+
+When you (or an assistant) add, remove, rename, or change a public `/api/v1` route or its fields, update that yaml **in the same sitting**. Then, from your Seedly folder:
+
+```
+node /path/to/seedly-mcp-0.1.0/bin/sync-tools.mjs --seedly .
+node /path/to/seedly-mcp-0.1.0/bin/doctor.mjs --seedly .
+```
+
+Publish the website afterward so Claude on the web sees the new list. Restart Cursor if you use the program on your computer.
+
+A Seedly update may already refresh the yaml. Still run those two commands afterward.
+
+You do **not** need to add send-message, invoice money, or webhook rows. Those stay off even if they appear in the yaml.
+
+If doctor **warns** that a tool used a fallback, the yaml is missing that door. Add it to the yaml (and the live API) or ignore the warn if you did not mean to ship that door.
+
+Longer version: [OPENAPI.md](OPENAPI.md).
+
 ## Check that install stuck
 
 From the Seedly folder:
@@ -135,7 +156,7 @@ From the Seedly folder:
 node /path/to/seedly-mcp-0.1.0/bin/doctor.mjs --seedly .
 ```
 
-You want `ok` on every line. If you see `ERR`, copy the whole output and stop.
+You want `ok` on every line. A **warn** about a fallback tool is OK. If you see `ERR`, copy the whole output and stop. After an API change, run `sync-tools` first (see above).
 
 ## Remove SeedlyMCP
 

@@ -7,6 +7,7 @@ Owner-facing twin: [install-owners.md](install-owners.md). Factory rules: [facto
 SKU playbooks (prefer these when the zip is named):
 
 - [SeedlyMCP AGENTS.md](../packages/seedly-mcp/AGENTS.md)
+- [SeedlyMCP OpenAPI sync](../packages/seedly-mcp/OPENAPI.md) — when the host `/api/v1` contract changes, update `docs/openapi.yaml` in the same sitting, then `bin/sync-tools.mjs`
 - [HighLevel import AGENTS.md](../packages/ghl-import/AGENTS.md)
 
 ## Hard rules

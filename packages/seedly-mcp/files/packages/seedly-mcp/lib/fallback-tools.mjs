@@ -1,12 +1,12 @@
 /**
- * SeedlyMCP v1 tool catalog. Each tool is a thin wrap of one /api/v1 route.
- * Verbs follow OpenAPI when the build sheet and spec disagree.
+ * Shipped v1 rows. Used when the host OpenAPI has no matching operationId.
+ * Do not overwrite this file during sync — only tools.mjs is regenerated.
  */
 
 /** @typedef {{ name: string, method: 'GET'|'POST'|'PATCH'|'PUT', path: string, description: string, pathParams?: string[], queryParams?: string[], bodyParams?: string[], required?: string[] }} SeedlyMcpTool */
 
 /** @type {readonly SeedlyMcpTool[]} */
-export const TOOLS = [
+export const FALLBACK_TOOLS = [
   {
     name: 'list_contacts',
     method: 'GET',
@@ -267,71 +267,3 @@ export const TOOLS = [
     description: 'List locations the API key can reach. Agency keys need X-Location-Id on later calls.',
   },
 ];
-
-export { BLOCKED_V1_TOOLS } from './allow-map.mjs';
-
-export function getTool(name) {
-  return TOOLS.find((t) => t.name === name) ?? null;
-}
-
-export function toolRoute(name) {
-  const tool = getTool(name);
-  if (!tool) return null;
-  return { method: tool.method, path: tool.path };
-}
-
-function stringProp(description) {
-  return { type: 'string', description };
-}
-
-export function inputSchemaFor(tool) {
-  /** @type {Record<string, { type: string, description?: string }>} */
-  const properties = {};
-  const required = [...(tool.required ?? [])];
-  for (const name of tool.pathParams ?? []) {
-    properties[name] = stringProp(`Path id for ${tool.path}`);
-  }
-  for (const name of tool.queryParams ?? []) {
-    properties[name] = stringProp(`Query ${name}`);
-  }
-  for (const name of tool.bodyParams ?? []) {
-    properties[name] = { description: `Body field ${name}` };
-  }
-  return {
-    type: 'object',
-    properties,
-    required,
-    additionalProperties: true,
-  };
-}
-
-export function mcpToolsList() {
-  return TOOLS.map((tool) => ({
-    name: tool.name,
-    description: tool.description,
-    inputSchema: inputSchemaFor(tool),
-  }));
-}
-
-export function resolveRequest(tool, args = {}) {
-  const params = args && typeof args === 'object' ? { ...args } : {};
-  let path = tool.path;
-  for (const name of tool.pathParams ?? []) {
-    const value = params[name];
-    if (value === undefined || value === null || value === '') {
-      throw new Error(`Missing path parameter: ${name}`);
-    }
-    path = path.replace(`{${name}}`, encodeURIComponent(String(value)));
-    delete params[name];
-  }
-  /** @type {Record<string, string>} */
-  const query = {};
-  for (const name of tool.queryParams ?? []) {
-    if (params[name] !== undefined && params[name] !== null && params[name] !== '') {
-      query[name] = String(params[name]);
-    }
-    delete params[name];
-  }
-  const body = tool.method === 'GET' ? undefined : params;
-  return { method: tool.method, path, query, body };
-}

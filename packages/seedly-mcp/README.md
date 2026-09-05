@@ -6,6 +6,7 @@ This zip is not a CRM. It will not run on its own.
 
 - **Owner (not a programmer):** start at [INSTALL.md](INSTALL.md)
 - **AI agent doing the install:** start at [AGENTS.md](AGENTS.md)
+- **After an `/api/v1` change:** [OPENAPI.md](OPENAPI.md) then `bin/sync-tools.mjs`
 
 ## Install
 

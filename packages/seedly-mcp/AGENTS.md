@@ -51,7 +51,13 @@ runInstall({ kitRoot: process.cwd(), checkout: '/ABS/seedly', skipTypecheck: tru
 
 (from `packages/seedly-mcp`, adjust paths). Packed zips resolve toolkit via `bin/resolve-toolkit.mjs` (`./toolkit` or `../../toolkit`).
 
-Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`. It never deploys.
+Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`, then refreshes `packages/seedly-mcp/lib/tools.mjs` from the host `docs/openapi.yaml` when that file exists. It never deploys.
+
+If you call toolkit `runInstall` directly (dev path above), also run:
+
+```
+node /ABS/seedly-mcp-0.1.0/bin/sync-tools.mjs --seedly /ABS/seedly
+```
 
 ## After install (host)
 
@@ -111,6 +117,19 @@ OAuth allow-list includes `https://claude.ai/api/mcp/auth_callback`. CIMD + DCR 
 
 Fail-fast if either env var is missing. Never print the key.
 
+## Keep OpenAPI in step with `/api/v1`
+
+Same-change rule: any edit to `convex/http.ts` `/api/v1/*` (or the handler it calls) **must** update host `docs/openapi.yaml` and `docs/integration-guide.md` when the public contract changed. Do not leave docs for later. Full checklist: [OPENAPI.md](OPENAPI.md).
+
+Do not silently rename allow-listed `operationId`s (`listContacts`, `completeTask`, `bookAppointment`, …). Do not add send/money/webhook operations to `ALLOW_MAP`. After the yaml change:
+
+```
+node /ABS/seedly-mcp-0.1.0/bin/sync-tools.mjs --seedly /ABS/seedly
+node /ABS/seedly-mcp-0.1.0/bin/doctor.mjs --seedly /ABS/seedly
+```
+
+Remind the owner to publish the website so `/seedly-mcp` serves the new `tools.mjs`.
+
 ## Verify
 
 ```
@@ -129,6 +148,8 @@ Must pass. Also assert:
 node --test packages/seedly-mcp/src/__tests__/*.test.mjs packages/toolkit/src/__tests__/*.test.mjs
 ```
 
+Doctor may **warn** when an allow-listed `operationId` is missing from the host yaml (shipped fallback kept). That is not `ERR`.
+
 Do not call a live Convex deployment or Anthropic from CI.
 
 ## Uninstall
@@ -145,4 +166,4 @@ Dispatch / GoSeedly / ghl-import stay. Tell the owner to revoke `SeedlyMCP (Clau
 node scripts/pack.mjs seedly-mcp
 ```
 
-Writes `dist/seedly-mcp-0.1.0.zip`. Zip must include `toolkit/`, `INSTALL.md`, `AGENTS.md`, and must not include `convex/http.ts` or `SETUP/`.
+Writes `dist/seedly-mcp-0.1.0.zip`. Zip must include `toolkit/`, `INSTALL.md`, `AGENTS.md`, `OPENAPI.md`, and must not include `convex/http.ts` or `SETUP/`.
