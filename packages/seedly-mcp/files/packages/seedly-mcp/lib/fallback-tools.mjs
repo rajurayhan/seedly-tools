@@ -8,6 +8,18 @@
 /** @type {readonly SeedlyMcpTool[]} */
 export const FALLBACK_TOOLS = [
   {
+    name: 'get_me',
+    method: 'GET',
+    path: '/api/v1/me',
+    description: 'The user who authorized this connection (the API key owner).',
+  },
+  {
+    name: 'get_location',
+    method: 'GET',
+    path: '/api/v1/location',
+    description: 'The location (sub-account) this connection is authorized to use.',
+  },
+  {
     name: 'list_contacts',
     method: 'GET',
     path: '/api/v1/contacts',
