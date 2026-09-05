@@ -1,0 +1,23 @@
+{
+  "name": "seedly-docker",
+  "version": "0.1.0",
+  "extensionApiVersion": 1,
+  "seedlyRange": ">=5.8.0 <5.9.0",
+  "ownedFiles": [
+    "compose.yaml",
+    "compose.prod.yaml",
+    ".env.docker.example",
+    "docker.mk",
+    "docker/Dockerfile",
+    "docker/convex-init-entrypoint.sh",
+    "docker/convex-sync-entrypoint.sh",
+    "docker/web-entrypoint.sh",
+    "docker/generate-env.sh",
+    "docker/README.md",
+    "scripts/docker-seed.sh",
+    "apps/web/.env.docker-hybrid.example",
+    "apps/web/lib/seedly-docker/convex-urls.ts",
+    "apps/web/lib/seedly-docker/connect-src.ts",
+    "apps/web/lib/seedly-docker/__tests__/convex-urls.test.ts"
+  ]
+}

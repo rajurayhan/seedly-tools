@@ -20,6 +20,8 @@ const hostFixture = join(repoRoot, 'fixtures/seedly-host');
 const miniKit = join(repoRoot, 'fixtures/mini-addon');
 const ghlKit = join(repoRoot, 'packages/ghl-import');
 const seedlyMcpKit = join(repoRoot, 'packages/seedly-mcp');
+const seedlyDockerKit = join(repoRoot, 'packages/seedly-docker');
+const seedlyCoolifyKit = join(repoRoot, 'packages/seedly-coolify');
 const toolkitRoot = join(repoRoot, 'packages/toolkit');
 
 function silentLog() {
@@ -212,6 +214,69 @@ test('seedly-mcp installs on the fixture host and doctor passes', () => {
     const afterPlan = read(checkout, 'apps/web/lib/extension-plan-features.ts');
     assert.match(afterPlan, /key: 'dispatch'/);
     assert.equal(afterPlan.includes("key: 'seedly_mcp'"), false);
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-docker copies ops files, patches host URLs, and uninstall restores them', async () => {
+  const checkout = cloneHost();
+  try {
+    runInstall({
+      kitRoot: seedlyDockerKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const { applyHostPatches, revertHostPatches } = await import(
+      join(seedlyDockerKit, 'bin/patch-host.mjs')
+    );
+    applyHostPatches(checkout, { log: silentLog() });
+
+    assert.equal(existsSync(join(checkout, 'compose.yaml')), true);
+    assert.equal(existsSync(join(checkout, 'docker.mk')), true);
+    assert.match(read(checkout, 'compose.yaml'), /name: seedly-crm/);
+    assert.match(read(checkout, 'apps/web/lib/auth-server.ts'), /seedly-docker\/convex-urls/);
+    assert.match(read(checkout, 'apps/web/lib/auth-server.ts'), /getServerConvexUrl/);
+    assert.match(read(checkout, 'apps/web/lib/security-headers.ts'), /\/\/ seedly-docker/);
+    assert.match(read(checkout, 'convex/actions/invoicePdf.ts'), /INTERNAL_APP_URL \/\* seedly-docker \*\//);
+    assert.equal(read(checkout, 'scripts/docker-seed.sh').includes('sulusDockerSeed'), false);
+    assert.equal(read(checkout, 'scripts/docker-seed.sh').includes('raju@sulus.ai'), false);
+
+    const doctor = runDoctor({ kitRoot: seedlyDockerKit, checkout, log: silentLog() });
+    assert.equal(doctor.ok, true, doctor.checks.filter((c) => !c.ok).map((c) => c.message).join('; '));
+
+    revertHostPatches(checkout, { log: silentLog() });
+    runUninstall({ kitRoot: seedlyDockerKit, checkout, yes: true });
+    assert.equal(existsSync(join(checkout, 'compose.yaml')), false);
+    assert.equal(existsSync(join(checkout, 'apps/web/lib/seedly-docker/convex-urls.ts')), false);
+    assert.equal(read(checkout, 'apps/web/lib/auth-server.ts').includes('seedly-docker'), false);
+    assert.match(read(checkout, 'apps/web/lib/auth-server.ts'), /NEXT_PUBLIC_CONVEX_URL/);
+    assert.equal(read(checkout, 'convex/actions/invoicePdf.ts').includes('seedly-docker'), false);
+    assert.equal(existsSync(join(checkout, 'convex/dispatch/jobs.ts')), true);
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-coolify includes Coolify compose and the Docker runtime', async () => {
+  const checkout = cloneHost();
+  try {
+    runInstall({
+      kitRoot: seedlyCoolifyKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const { applyHostPatches } = await import(join(seedlyCoolifyKit, 'bin/patch-host.mjs'));
+    applyHostPatches(checkout, { log: silentLog() });
+    assert.equal(existsSync(join(checkout, 'compose.coolify.yaml')), true);
+    assert.equal(existsSync(join(checkout, 'compose.yaml')), true);
+    assert.equal(existsSync(join(checkout, 'docker/Dockerfile.convex-init')), true);
+    assert.match(read(checkout, 'compose.coolify.yaml'), /name: seedly-crm/);
+    assert.equal(read(checkout, '.env.coolify.example').includes('raju@sulus.ai'), false);
+    const doctor = runDoctor({ kitRoot: seedlyCoolifyKit, checkout, log: silentLog() });
+    assert.equal(doctor.ok, true, doctor.checks.filter((c) => !c.ok).map((c) => c.message).join('; '));
   } finally {
     rmSync(checkout, { recursive: true, force: true });
   }

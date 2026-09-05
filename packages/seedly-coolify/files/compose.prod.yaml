@@ -1,0 +1,39 @@
+# Production-like overlay — built Next.js, one-shot Convex deploy (no file watch).
+#
+#   make -f docker.mk docker-up-prod
+#
+# Still self-hosted Convex. Not a substitute for a hardened VPS deploy
+# (TLS, backups, public webhook URLs).
+
+services:
+  convex-sync:
+    environment:
+      CONVEX_SYNC_ONCE: "1"
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: prod
+      args:
+        NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://127.0.0.1:3210}
+        NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL:-http://127.0.0.1:3211}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://127.0.0.1:3210}
+      NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL:-http://127.0.0.1:3211}
+      CONVEX_URL: http://convex-backend:3210
+      CONVEX_SITE_URL: http://convex-backend:3211
+    # Compose merges lists across files. `[]` does not clear the dev bind mounts,
+    # so the host apps/ folder and the leftover web_next volume hide the image's
+    # pre-built .next. !reset drops them so `next start` uses the baked build.
+    volumes: !reset []
+    entrypoint: !reset []
+    command: ["pnpm", "--filter", "@seedly-crm/web", "start"]
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+      convex-sync:
+        condition: service_completed_successfully

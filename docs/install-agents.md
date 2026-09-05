@@ -9,6 +9,8 @@ SKU playbooks (prefer these when the zip is named):
 - [SeedlyMCP AGENTS.md](../packages/seedly-mcp/AGENTS.md)
 - [SeedlyMCP OpenAPI sync](../packages/seedly-mcp/OPENAPI.md) — when the host `/api/v1` contract changes, update `docs/openapi.yaml` in the same sitting, then `bin/sync-tools.mjs`
 - [HighLevel import AGENTS.md](../packages/ghl-import/AGENTS.md)
+- [Seedly Docker AGENTS.md](../packages/seedly-docker/AGENTS.md)
+- [Seedly Coolify AGENTS.md](../packages/seedly-coolify/AGENTS.md)
 
 ## Hard rules
 

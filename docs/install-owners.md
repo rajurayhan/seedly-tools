@@ -6,6 +6,8 @@ Each zip also has its own owner guide. Start there if you already know which add
 
 - [SeedlyMCP](../packages/seedly-mcp/INSTALL.md)
 - [HighLevel import](../packages/ghl-import/INSTALL.md)
+- [Seedly Docker](../packages/seedly-docker/INSTALL.md)
+- [Seedly Coolify](../packages/seedly-coolify/INSTALL.md)
 
 If an assistant (Cursor, Claude) is doing the typing, send them [install-agents.md](install-agents.md).
 
@@ -39,7 +41,7 @@ npx pnpm install
 
 If the add-on touched the backend (most do), also run `npx convex deploy` when you mean to update the live database side. That is a live publish. Only do it when you are ready.
 
-Then turn the add-on on in **Admin → Plans → Add-ons**.
+Then follow that zip’s install guide. Some add-ons also need a switch in **Admin → Plans → Add-ons**. Docker and Coolify do not.
 
 ## If something looks wrong
 
