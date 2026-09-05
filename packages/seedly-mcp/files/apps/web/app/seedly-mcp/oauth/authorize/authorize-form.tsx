@@ -36,18 +36,6 @@ export function AuthorizeForm({
     setBusy(true);
     setError('');
     try {
-      if (clientId.startsWith('https://')) {
-        const doc = await fetchCimd(clientId);
-        if (!doc.ok) {
-          setError(doc.error);
-          return;
-        }
-        if (!doc.redirectUris.includes(redirectUri)) {
-          setError('Claude asked for a redirect that is not in its client document.');
-          return;
-        }
-      }
-
       const key = await createKey({
         name: 'SeedlyMCP (Claude)',
         scopes: [...SEEDLY_MCP_KEY_SCOPES],
@@ -106,29 +94,5 @@ function hostOf(clientId: string): string {
     return new URL(clientId).host;
   } catch {
     return clientId;
-  }
-}
-
-async function fetchCimd(clientId: string): Promise<
-  { ok: true; clientName?: string; redirectUris: string[] } | { ok: false; error: string }
-> {
-  try {
-    const res = await fetch(clientId, { headers: { Accept: 'application/json' } });
-    if (!res.ok) return { ok: false, error: 'Could not load Claude’s client document.' };
-    const doc = (await res.json()) as {
-      client_id?: string;
-      client_name?: string;
-      redirect_uris?: string[];
-    };
-    if (doc.client_id !== clientId) {
-      return { ok: false, error: 'Claude’s client document did not match its address.' };
-    }
-    return {
-      ok: true,
-      clientName: doc.client_name,
-      redirectUris: Array.isArray(doc.redirect_uris) ? doc.redirect_uris : [],
-    };
-  } catch {
-    return { ok: false, error: 'Could not load Claude’s client document.' };
   }
 }

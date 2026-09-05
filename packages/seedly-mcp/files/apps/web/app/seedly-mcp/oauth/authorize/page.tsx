@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getToken } from '@/lib/auth-server';
+import { fetchCimdDocument, isClaudeCimdHost, isHttpsClientId } from '@/lib/seedly-mcp/cimd';
 import { isAllowedRedirectUri } from '@/lib/seedly-mcp/oauth-reexport';
 import { AuthorizeForm } from './authorize-form';
 
@@ -43,6 +44,16 @@ export default async function SeedlyMcpAuthorizePage({
   }
   if (!isAllowedRedirectUri(redirectUri)) {
     return <p className="p-8">That redirect is not on the SeedlyMCP allow-list.</p>;
+  }
+  if (isHttpsClientId(clientId)) {
+    const doc = await fetchCimdDocument(clientId);
+    if (doc.ok) {
+      if (!doc.redirectUris.includes(redirectUri)) {
+        return <p className="p-8">Claude asked for a redirect that is not in its client document.</p>;
+      }
+    } else if (!(isClaudeCimdHost(clientId) && isAllowedRedirectUri(redirectUri))) {
+      return <p className="p-8">{doc.error}</p>;
+    }
   }
 
   return (

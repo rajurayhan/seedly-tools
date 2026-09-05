@@ -7,6 +7,14 @@ const SCHEMA = readFileSync(join(ROOT, 'seedlyMcpSchema.ts'), 'utf-8');
 const META = readFileSync(join(ROOT, 'seedlyMcp/oauthMetadata.ts'), 'utf-8');
 const HTTP = readFileSync(join(ROOT, 'seedlyMcp/http.ts'), 'utf-8');
 const API = readFileSync(join(ROOT, 'seedlyMcp/api.ts'), 'utf-8');
+const AUTHORIZE_FORM = readFileSync(
+  join(ROOT, '../apps/web/app/seedly-mcp/oauth/authorize/authorize-form.tsx'),
+  'utf-8',
+);
+const AUTHORIZE_PAGE = readFileSync(
+  join(ROOT, '../apps/web/app/seedly-mcp/oauth/authorize/page.tsx'),
+  'utf-8',
+);
 
 describe('SeedlyMCP Convex add-on', () => {
   it('declares grant tables on the extension seam', () => {
@@ -30,5 +38,11 @@ describe('SeedlyMCP Convex add-on', () => {
   it('does not register routes on convex/http.ts', () => {
     expect(HTTP).not.toContain("from '../http'");
     expect(API).not.toContain("from '../http'");
+  });
+
+  it('loads Claude CIMD on the server, not in the Allow button', () => {
+    expect(AUTHORIZE_FORM).not.toContain('fetchCimd');
+    expect(AUTHORIZE_FORM).not.toContain('await fetch(clientId');
+    expect(AUTHORIZE_PAGE).toContain('fetchCimdDocument');
   });
 });
