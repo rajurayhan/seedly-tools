@@ -74,7 +74,7 @@ If OAuth discovery cannot complete, add the connector with a request header `Aut
 
 ## What Claude / Cursor can do
 
-Read contacts, conversations, messages, calendars, appointments, tasks, opportunities, pipelines, invoices, estimates, and locations.
+Read the current user, the authorized location, contacts, conversations, messages, calendars, appointments, tasks, opportunities, pipelines, invoices, estimates, and other locations.
 
 Create/update contacts, create/complete tasks, create opportunities and move their status/stage, book appointments.
 

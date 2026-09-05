@@ -33,7 +33,7 @@ Authorization: Bearer sk_live_...`;
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold">SeedlyMCP</h1>
+        <h1 className="text-2xl font-semibold">MCP</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Point Cursor or Claude at <strong>this</strong> Seedly. Your contact book stays here. There
           is no chat box in the CRM — that is a later add-on.

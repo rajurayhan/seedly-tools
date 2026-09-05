@@ -7,6 +7,8 @@
 
 /** @type {readonly AllowEntry[]} */
 export const ALLOW_MAP = [
+  { operationId: 'getMe', name: 'get_me' },
+  { operationId: 'getLocation', name: 'get_location' },
   { operationId: 'listContacts', name: 'list_contacts' },
   { operationId: 'getContact', name: 'get_contact' },
   { operationId: 'listContactFields', name: 'list_contact_fields' },

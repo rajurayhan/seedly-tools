@@ -71,7 +71,7 @@ Then the **owner** publishes:
 - Website / Vercel as they already do
 - `npx convex deploy` only after you explain backend files changed and they say yes
 
-Enable **SeedlyMCP** on the location’s plan (Admin → Plans → Add-ons). Sidebar: `/mcp-setup`.
+Enable **SeedlyMCP** on the location’s plan (Admin → Plans → Add-ons). Sidebar label: **MCP** (`/mcp-setup`).
 
 ## Seams this zip merges
 

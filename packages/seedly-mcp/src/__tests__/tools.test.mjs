@@ -4,6 +4,8 @@ import { BLOCKED_V1_TOOLS, TOOLS, getTool, toolRoute, resolveRequest } from '../
 import { catalogCoverage } from '../../files/packages/seedly-mcp/lib/tool-groups.mjs';
 
 const EXPECTED = {
+  get_me: ['GET', '/api/v1/me'],
+  get_location: ['GET', '/api/v1/location'],
   list_contacts: ['GET', '/api/v1/contacts'],
   get_contact: ['GET', '/api/v1/contacts/{id}'],
   list_contact_fields: ['GET', '/api/v1/contacts/fields'],

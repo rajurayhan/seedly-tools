@@ -9,7 +9,7 @@ type NavItem = {
 };
 
 export const extensionNavItems: NavItem[] = [
-  { label: 'SeedlyMCP', href: '/mcp-setup', icon: Plug },
+  { label: 'MCP', href: '/mcp-setup', icon: Plug },
 ];
 
 export const extensionNavFeatureMap: Record<string, string> = {

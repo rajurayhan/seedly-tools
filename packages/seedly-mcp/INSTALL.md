@@ -7,7 +7,7 @@ SeedlyMCP lets an assistant on **your** computer (or Claude on the web) read and
 ## What you will have when you are done
 
 - A **SeedlyMCP** switch under Admin → Plans → Add-ons
-- A **SeedlyMCP** item in a location’s sidebar with copy-paste setup
+- An **MCP** item in a location’s sidebar with copy-paste setup
 - Cursor / Claude Desktop talking to your Seedly with an API key you create
 - Optional: Claude on the web signing in on your Seedly website
 
@@ -74,7 +74,7 @@ That updates the live database side. Only run it when you mean to. A vague “go
 4. Under **Add-ons**, turn on **SeedlyMCP**.
 5. Save.
 
-Open a location. You should see **SeedlyMCP** in the sidebar. That page repeats the Cursor and Claude steps with your real website address.
+Open a location. You should see **MCP** in the sidebar. That page repeats the Cursor and Claude steps with your real website address.
 
 ## 5. Connect Cursor or Claude on your computer
 

@@ -168,6 +168,14 @@ paths:
     get:
       operationId: getEstimate
       summary: Get an estimate
+  /api/v1/me:
+    get:
+      operationId: getMe
+      summary: Current user
+  /api/v1/location:
+    get:
+      operationId: getLocation
+      summary: Current authorized location
   /api/v1/sub-accounts:
     get:
       operationId: listSubAccounts

@@ -10,6 +10,10 @@ import { BLOCKED_V1_TOOLS, TOOLS } from './tools.mjs';
 /** @type {readonly ToolGroup[]} */
 export const TOOL_GROUPS = [
   {
+    title: 'Account',
+    names: ['get_me', 'get_location'],
+  },
+  {
     title: 'Contacts',
     names: ['list_contacts', 'get_contact', 'list_contact_fields', 'create_contact', 'update_contact'],
   },
