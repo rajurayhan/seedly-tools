@@ -14,3 +14,24 @@ export function resolveToolkit(fromBinFile) {
   }
   return { kitRoot, cliHref: pathToFileURL(found).href };
 }
+
+/** Dev kit: files/<rel>. Packed zip: <rel> at the zip root. */
+export function resolveOwnedHref(kitRoot, rel) {
+  const candidates = [join(kitRoot, 'files', rel), join(kitRoot, rel)];
+  const found = candidates.find(existsSync);
+  if (!found) {
+    throw new Error(`Could not find ${rel} in this SeedlyMCP zip.`);
+  }
+  return pathToFileURL(found).href;
+}
+
+/** Dev kits keep owned files under `files/`. Packed zips flatten them. */
+export function resolveOwnedFile(kitRoot, rel) {
+  const nested = join(kitRoot, 'files', rel);
+  const flat = join(kitRoot, rel);
+  const found = existsSync(nested) ? nested : existsSync(flat) ? flat : null;
+  if (!found) {
+    throw new Error(`Could not find ${rel} in this SeedlyMCP kit.`);
+  }
+  return { path: found, href: pathToFileURL(found).href };
+}
