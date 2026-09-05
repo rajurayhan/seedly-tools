@@ -28,7 +28,7 @@ Claude-to-Seedly OAuth belongs here. QuickBooks / HubSpot OAuth does not ([conne
 
 ## Phase
 
-1 — next zip. Do not start Phases 2–5 product code until this zip installs on the fixture host.
+1 — on the shelf. Zip installs on `fixtures/seedly-host/`.
 
 ## Packaging
 
@@ -45,4 +45,6 @@ Seedly already has `/api/v1`. MCP is not in the CRM today. This zip is the door.
 
 ## Build sheet
 
-Phase 1 detail (tools, seams, buyer Cursor config): [seedly-mcp-build.md](seedly-mcp-build.md). The zip is not built yet.
+Phase 1 detail (tools, seams, buyer Cursor config): [seedly-mcp-build.md](seedly-mcp-build.md). Pack: `node scripts/pack.mjs seedly-mcp` → `dist/seedly-mcp-0.1.0.zip`.
+
+Install: owners use [INSTALL.md](../packages/seedly-mcp/INSTALL.md). Agents use [AGENTS.md](../packages/seedly-mcp/AGENTS.md).

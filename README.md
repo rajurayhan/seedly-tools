@@ -15,7 +15,7 @@ Every planned item is written up in [docs/](docs/README.md).
 | --- | --- |
 | [Factory](docs/factory.md) | Built (`packages/toolkit`) |
 | [HighLevel import](docs/ghl-import.md) | On the shelf (`packages/ghl-import`) |
-| [SeedlyMCP](docs/seedly-mcp.md) | Planned — next zip |
+| [SeedlyMCP](docs/seedly-mcp.md) | On the shelf (`packages/seedly-mcp`) |
 | [SeedlyPin](docs/seedly-pin.md) | Planned — hosted + thin zip |
 | [Login As](docs/login-as.md) | Planned — agency only |
 | [Native agent](docs/native-agent.md) | Planned — after SeedlyMCP |
@@ -27,6 +27,7 @@ Every planned item is written up in [docs/](docs/README.md).
 | Package | What a buyer gets |
 | --- | --- |
 | `packages/ghl-import` | HighLevel import: sidebar Import row, read-only GHL token, dry-run then import |
+| `packages/seedly-mcp` | SeedlyMCP: local stdio + remote `/seedly-mcp` for Cursor / Claude |
 | `packages/toolkit` | Shared install / uninstall / pack / doctor. Vendored into every buyer zip |
 
 ## Pack a buyer zip
@@ -35,9 +36,12 @@ From this folder:
 
 ```
 node scripts/pack.mjs ghl-import
+node scripts/pack.mjs seedly-mcp
 ```
 
-Writes `dist/ghl-import-<version>.zip`. The zip includes the toolkit so the buyer does not need this repo.
+Writes `dist/<sku>-<version>.zip`. The zip includes the toolkit so the buyer does not need this repo.
+
+Owner walkthrough: [docs/install-owners.md](docs/install-owners.md). Agent playbook: [docs/install-agents.md](docs/install-agents.md).
 
 ## How a buyer installs
 
@@ -57,7 +61,7 @@ License terms for the add-on source are in [ADDON-LICENSE.md](ADDON-LICENSE.md).
 ## Tests
 
 ```
-node --test packages/toolkit/src/__tests__/*.test.mjs
+node --test packages/toolkit/src/__tests__/*.test.mjs packages/seedly-mcp/src/__tests__/*.test.mjs
 ```
 
 Tests use `fixtures/seedly-host/`. They do not install into a real CRM checkout.

@@ -19,6 +19,7 @@ const repoRoot = resolve(here, '../../../..');
 const hostFixture = join(repoRoot, 'fixtures/seedly-host');
 const miniKit = join(repoRoot, 'fixtures/mini-addon');
 const ghlKit = join(repoRoot, 'packages/ghl-import');
+const seedlyMcpKit = join(repoRoot, 'packages/seedly-mcp');
 const toolkitRoot = join(repoRoot, 'packages/toolkit');
 
 function silentLog() {
@@ -174,6 +175,43 @@ test('ghl-import merges next to Dispatch and doctor passes', () => {
     const after = read(checkout, 'convex/extensions/index.ts');
     assert.match(after, /_m0\.extensionTables/);
     assert.equal(after.includes('ghlImportTables'), false);
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-mcp installs on the fixture host and doctor passes', () => {
+  const checkout = cloneHost();
+  try {
+    runInstall({
+      kitRoot: seedlyMcpKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const plan = read(checkout, 'apps/web/lib/extension-plan-features.ts');
+    assert.match(plan, /key: 'dispatch'/);
+    assert.match(plan, /key: 'seedly_mcp'/);
+    assert.match(plan, /label: 'SeedlyMCP'/);
+    assert.equal(/^\s*import\s/m.test(plan), false);
+    const paths = read(checkout, 'apps/web/lib/extension-public-paths.ts');
+    assert.match(paths, /'\/seedly-mcp'/);
+    assert.equal(/^\s*import\s/m.test(paths), false);
+    assert.equal(existsSync(join(checkout, 'packages/seedly-mcp/server.mjs')), true);
+    assert.equal(existsSync(join(checkout, 'convex/http.ts')), false);
+    const registry = readRegistry(checkout);
+    const entry = registry.modules.find((m) => m.name === 'seedly-mcp');
+    assert.ok(entry);
+    assert.equal((entry.ownedFiles ?? []).includes('convex/http.ts'), false);
+    const doctor = runDoctor({ kitRoot: seedlyMcpKit, checkout, log: silentLog() });
+    assert.equal(doctor.ok, true, doctor.checks.filter((c) => !c.ok).map((c) => c.message).join('; '));
+
+    runUninstall({ kitRoot: seedlyMcpKit, checkout, yes: true });
+    assert.equal(existsSync(join(checkout, 'packages/seedly-mcp/server.mjs')), false);
+    assert.equal(existsSync(join(checkout, 'convex/dispatch/jobs.ts')), true);
+    const afterPlan = read(checkout, 'apps/web/lib/extension-plan-features.ts');
+    assert.match(afterPlan, /key: 'dispatch'/);
+    assert.equal(afterPlan.includes("key: 'seedly_mcp'"), false);
   } finally {
     rmSync(checkout, { recursive: true, force: true });
   }

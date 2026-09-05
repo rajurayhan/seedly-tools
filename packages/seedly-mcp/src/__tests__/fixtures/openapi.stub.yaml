@@ -1,0 +1,243 @@
+openapi: "3.1.0"
+info:
+  title: Stub
+  version: "1.0.0"
+paths:
+  /api/v1/contacts:
+    get:
+      operationId: listContacts
+      summary: List contacts
+      parameters:
+        - name: email
+          in: query
+        - name: search
+          in: query
+        - name: limit
+          in: query
+    post:
+      operationId: createContact
+      summary: Create a contact
+      description: |
+        Create a new contact.
+
+        Email is merge-idempotent.
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContactCreate" }
+  /api/v1/contacts/fields:
+    get:
+      operationId: listContactFields
+      summary: List custom field definitions
+  /api/v1/contacts/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+    get:
+      operationId: getContact
+      summary: Get one contact
+    patch:
+      operationId: updateContact
+      summary: Partial-update a contact
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContactUpdate" }
+  /api/v1/conversations:
+    get:
+      operationId: listConversations
+      summary: List conversations
+      parameters:
+        - name: contactId
+          in: query
+  /api/v1/conversations/{id}:
+    get:
+      operationId: getConversation
+      summary: Get one conversation
+  /api/v1/conversations/{id}/messages:
+    get:
+      operationId: listMessages
+      summary: List messages
+      parameters:
+        - name: limit
+          in: query
+    post:
+      operationId: sendMessage
+      summary: Send a conversation message
+  /api/v1/calendars:
+    get:
+      operationId: listCalendars
+      summary: List calendars
+  /api/v1/calendars/types:
+    get:
+      operationId: listAppointmentTypes
+      summary: List appointment types
+      parameters:
+        - name: calendarId
+          in: query
+  /api/v1/calendars/availability:
+    get:
+      operationId: getAvailability
+      summary: Get bookable slots
+      parameters:
+        - name: appointmentTypeId
+          in: query
+          required: true
+        - name: date
+          in: query
+          required: true
+  /api/v1/calendars/appointments:
+    get:
+      operationId: listAppointments
+      summary: List appointments
+    post:
+      operationId: bookAppointment
+      summary: Book an appointment
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BookAppointment" }
+  /api/v1/tasks:
+    get:
+      operationId: listTasks
+      summary: List tasks
+    post:
+      operationId: createTask
+      summary: Create a task
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TaskCreate" }
+  /api/v1/tasks/{id}:
+    get:
+      operationId: getTask
+      summary: Get a task
+  /api/v1/tasks/{id}/complete:
+    put:
+      operationId: completeTask
+      summary: Mark a task completed
+  /api/v1/opportunities:
+    get:
+      operationId: listOpportunities
+      summary: List opportunities
+    post:
+      operationId: createOpportunity
+      summary: Create an opportunity
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OpportunityCreate" }
+  /api/v1/opportunities/{id}:
+    get:
+      operationId: getOpportunity
+      summary: Get an opportunity
+  /api/v1/opportunities/{id}/status:
+    put:
+      operationId: setOpportunityStatus
+      summary: Set opportunity status
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OpportunityStatusUpdate" }
+  /api/v1/opportunities/{id}/stage:
+    put:
+      operationId: moveOpportunityStage
+      summary: Move opportunity stage
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OpportunityStageMove" }
+  /api/v1/pipelines:
+    get:
+      operationId: listPipelines
+      summary: List pipelines
+  /api/v1/invoices:
+    get:
+      operationId: listInvoices
+      summary: List invoices
+  /api/v1/invoices/{id}:
+    get:
+      operationId: getInvoice
+      summary: Get an invoice
+  /api/v1/estimates:
+    get:
+      operationId: listEstimates
+      summary: List estimates
+  /api/v1/estimates/{id}:
+    get:
+      operationId: getEstimate
+      summary: Get an estimate
+  /api/v1/sub-accounts:
+    get:
+      operationId: listSubAccounts
+      summary: List locations
+components:
+  schemas:
+    ContactCreate:
+      type: object
+      required: [firstName, lastName]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        extraField:
+          type: string
+    ContactUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    BookAppointment:
+      type: object
+      required: [appointmentTypeId, startTime]
+      properties:
+        appointmentTypeId:
+          type: string
+        startTime:
+          type: integer
+        notes:
+          type: string
+    TaskCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+    OpportunityCreate:
+      type: object
+      required: [pipelineId, stageId, contactId, name]
+      properties:
+        pipelineId:
+          type: string
+        stageId:
+          type: string
+        contactId:
+          type: string
+        name:
+          type: string
+    OpportunityStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+        lostReason:
+          type: string
+    OpportunityStageMove:
+      type: object
+      required: [stageId]
+      properties:
+        stageId:
+          type: string
+        beforeDealId:
+          type: string

@@ -26,7 +26,7 @@ export function runPack({
   kitRoot,
   toolkitRoot,
   distDir,
-  extraFiles = ['README.md', 'ADDON-LICENSE.md', 'seams.json'],
+  extraFiles = ['README.md', 'ADDON-LICENSE.md', 'INSTALL.md', 'AGENTS.md', 'OPENAPI.md', 'seams.json'],
 } = {}) {
   const { moduleJson } = loadKit(kitRoot);
   const name = `${moduleJson.name}-${moduleJson.version}`;

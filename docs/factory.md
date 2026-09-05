@@ -51,6 +51,8 @@ Seedly 5.8.x (`seedlyRange` and `extensionApiVersion: 1`).
 
 **Tests** use `fixtures/seedly-host/`. Do not dry-run install into a live CRM checkout.
 
+Owner walkthrough (any zip): [install-owners.md](install-owners.md). Agent playbook: [install-agents.md](install-agents.md).
+
 ## Buyer install (any zip)
 
 1. Unzip the add-on.

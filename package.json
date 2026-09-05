@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test packages/toolkit/src/__tests__/*.test.mjs",
+    "test": "node --test packages/toolkit/src/__tests__/*.test.mjs packages/seedly-mcp/src/__tests__/*.test.mjs",
     "pack": "node scripts/pack.mjs",
-    "pack:ghl-import": "node scripts/pack.mjs ghl-import"
+    "pack:ghl-import": "node scripts/pack.mjs ghl-import",
+    "pack:seedly-mcp": "node scripts/pack.mjs seedly-mcp"
   }
 }
