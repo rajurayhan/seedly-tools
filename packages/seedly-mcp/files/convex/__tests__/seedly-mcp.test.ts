@@ -7,6 +7,8 @@ const SCHEMA = readFileSync(join(ROOT, 'seedlyMcpSchema.ts'), 'utf-8');
 const META = readFileSync(join(ROOT, 'seedlyMcp/oauthMetadata.ts'), 'utf-8');
 const HTTP = readFileSync(join(ROOT, 'seedlyMcp/http.ts'), 'utf-8');
 const API = readFileSync(join(ROOT, 'seedlyMcp/api.ts'), 'utf-8');
+const IDENTITY = readFileSync(join(ROOT, 'seedlyMcp/identity.ts'), 'utf-8');
+const IDENTITY_ROUTES = readFileSync(join(ROOT, 'seedlyMcp/identityRoutes.ts'), 'utf-8');
 const AUTHORIZE_FORM = readFileSync(
   join(ROOT, '../apps/web/app/seedly-mcp/oauth/authorize/authorize-form.tsx'),
   'utf-8',
@@ -38,6 +40,17 @@ describe('SeedlyMCP Convex add-on', () => {
   it('does not register routes on convex/http.ts', () => {
     expect(HTTP).not.toContain("from '../http'");
     expect(API).not.toContain("from '../http'");
+    expect(IDENTITY).not.toContain("from '../http'");
+    expect(IDENTITY_ROUTES).not.toContain("from '../http'");
+  });
+
+  it('ships identity fallback routes under ext/seedly-mcp with any-key scope', () => {
+    expect(IDENTITY_ROUTES).toContain("namespace: 'seedly-mcp'");
+    expect(IDENTITY_ROUTES).toContain("path: 'me'");
+    expect(IDENTITY_ROUTES).toContain("path: 'location'");
+    expect(IDENTITY_ROUTES).toContain("scope: 'any'");
+    expect(IDENTITY).toContain('export const getMe');
+    expect(IDENTITY).toContain('export const getLocation');
   });
 
   it('loads Claude CIMD on the server, not in the Allow button', () => {

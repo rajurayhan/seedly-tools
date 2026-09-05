@@ -51,7 +51,7 @@ runInstall({ kitRoot: process.cwd(), checkout: '/ABS/seedly', skipTypecheck: tru
 
 (from `packages/seedly-mcp`, adjust paths). Packed zips resolve toolkit via `bin/resolve-toolkit.mjs` (`./toolkit` or `../../toolkit`).
 
-Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`, then refreshes `packages/seedly-mcp/lib/tools.mjs` from the host `docs/openapi.yaml` when that file exists. It never deploys.
+Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`, then — if the host yaml has no `operationId: getMe` — inserts **real** fallback doors `/api/v1/ext/seedly-mcp/me` and `/location` into that yaml, then refreshes `packages/seedly-mcp/lib/tools.mjs`. It never invents `/api/v1/me` in `convex/http.ts`. It never deploys.
 
 If you call toolkit `runInstall` directly (dev path above), also run:
 
@@ -85,8 +85,9 @@ Enable **SeedlyMCP** on the location’s plan (Admin → Plans → Add-ons). Sid
 | `convex/extensions/index.ts` | `...seedlyMcpTables` |
 | `convex/extensions/snapshot.ts` | `seedlyMcpClients`, `seedlyMcpAuthCodes`, `seedlyMcpGrants` (private) |
 | `convex/extensions/subjects.ts` | `seedly_mcp` → `Seedly_mcp` |
+| `convex/extensions/apiRoutes.ts` | `...seedlyMcpIdentityRoutes` (GET `ext/seedly-mcp/me` + `location`, `scope: 'any'`) |
 
-Do not own `convex/extensions/apiRoutes.ts` unless it is the only remaining public prefix. Prefer `/seedly-mcp` on the Next.js public-path seam.
+Do not own `convex/extensions/apiRoutes.ts`. Merge identity fallback routes only. Prefer `/seedly-mcp` on the Next.js public-path seam. Do not patch `convex/http.ts` to add `/api/v1/me` — that door is host-owned. The zip’s fallback is `/api/v1/ext/seedly-mcp/*` and needs a host dispatcher that honors `scope: 'any'` and passes `apiKeyId`.
 
 ## Remote URLs (buyer website origin)
 
@@ -142,6 +143,7 @@ Must pass. Also assert:
 - `ownedFiles` does not include `convex/http.ts`
 - `extension-plan-features.ts` has `key: 'seedly_mcp'` and no `import`
 - `packages/seedly-mcp/server.mjs` exists on the host
+- `convex/seedlyMcp/identityRoutes.ts` exists and does not import `convex/http.ts`
 - fixture tests (this repo, not the buyer):
 
 ```

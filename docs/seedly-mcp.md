@@ -12,6 +12,7 @@ Licensed Seedly 5.8.x owners who want AI tools on their own CRM.
 
 - Same install path as HighLevel import ([Factory](factory.md))
 - GoSeedly-style extension routes if the host seam is empty (append `apiRoutes`, scopes, tables)
+- Identity fallback `GET /api/v1/ext/seedly-mcp/me` and `/location` when the host has no `GET /api/v1/me`
 - Local MCP program (stdio) for Cursor / Claude Desktop, with a Seedly API key
 - Remote MCP on **their** public Seedly URL for claude.ai, with **OAuth** (they sign in to their Seedly)
 - Fallback if the host has no public MCP seam: Claude custom connector + API key request header

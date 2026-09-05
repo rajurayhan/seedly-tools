@@ -154,6 +154,35 @@
       ]
     },
     {
+      "file": "convex/extensions/apiRoutes.ts",
+      "ifMissing": "seedlyMcpIdentityRoutes",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { seedlyMcpIdentityRoutes } from '../seedlyMcp/identityRoutes';",
+          "marker": "from '../seedlyMcp/identityRoutes'"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "...seedlyMcpIdentityRoutes",
+          "from": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = goseedlyApiRoutes;",
+          "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...goseedlyApiRoutes,\n  ...seedlyMcpIdentityRoutes,\n];"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "...seedlyMcpIdentityRoutes",
+          "from": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [];",
+          "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...seedlyMcpIdentityRoutes,\n];"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [",
+          "insert": "\n  ...seedlyMcpIdentityRoutes,",
+          "skipIf": "...seedlyMcpIdentityRoutes"
+        }
+      ]
+    },
+    {
       "file": "convex/extensions/subjects.ts",
       "ifMissing": "seedlyMcp/moduleSubjects",
       "ops": [
@@ -203,6 +232,10 @@
       {
         "file": "convex/extensions/subjects.ts",
         "pattern": "seedlyMcp|_seedlyMcp"
+      },
+      {
+        "file": "convex/extensions/apiRoutes.ts",
+        "pattern": "seedlyMcpIdentityRoutes|seedlyMcp/identity"
       }
     ],
     "stripPlanFeatures": [
@@ -233,6 +266,11 @@
         "file": "apps/web/lib/extension-public-paths.ts",
         "needle": "'/seedly-mcp'",
         "message": "public paths include /seedly-mcp (exact entry, so the bare URL is public)"
+      },
+      {
+        "file": "convex/seedlyMcp/identityRoutes.ts",
+        "needle": "namespace: 'seedly-mcp'",
+        "message": "identity fallback routes live under /api/v1/ext/seedly-mcp"
       }
     ],
     "zeroImport": [

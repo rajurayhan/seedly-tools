@@ -24,6 +24,8 @@ If doctor **warns** that a tool used a fallback (for example `get_appointment`),
 
 If doctor says `docs/openapi.yaml is missing`, restore that file from your Seedly package. Stock 5.8 includes it.
 
+If the yaml has no `getMe` / `getLocation`, install and `sync-tools` append **`/api/v1/ext/seedly-mcp/me`** and **`/location`**. Those are real extension doors this zip ships. They are not `/api/v1/me` — that path only exists when the host router already has it.
+
 ## AI agent
 
 Same-change rule: any edit to `convex/http.ts` `/api/v1/*` (or the handler it calls) **must** update `docs/openapi.yaml` and `docs/integration-guide.md` when the public contract changed. Do not leave docs for later.
