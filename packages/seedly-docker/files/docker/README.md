@@ -16,6 +16,12 @@ npx pnpm --filter @seedly-crm/web dev
 
 Then open http://localhost:3100.
 
+The installer sets a `seedly-crm` session cookie so this stack does not reuse a sulus-crm cookie from `:3000`. If `get-session` is null after sign-in, re-run install and sign in again:
+
+```
+node /path/to/seedly-docker-0.1.0/bin/install.mjs --seedly .
+```
+
 Do **not** set `CONVEX_DEPLOYMENT` in `apps/web/.env.local`.
 
 ## Full Docker

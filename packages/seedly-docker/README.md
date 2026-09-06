@@ -19,7 +19,12 @@ There is no Admin → Plans switch. After install you start the stack with `make
 node /path/to/seedly-docker-0.1.0/bin/install.mjs --seedly .
 ```
 
-The installer copies compose files and a small URL helper, then patches a few Seedly files so the app can reach Convex inside Docker. It never deploys.
+The installer copies compose files and a small URL helper, then patches a few Seedly files so the app can reach Convex inside Docker and so localhost:3100 cookies do not collide with another CRM on :3000. It never deploys.
+
+```
+node /path/to/seedly-docker-0.1.0/bin/install.mjs --seedly .
+node /path/to/seedly-docker-0.1.0/bin/install.mjs --seedly . --dry-run
+```
 
 4. Start the stack (see INSTALL.md). Sign-up is disabled — run `make -f docker.mk docker-seed` for demo logins.
 

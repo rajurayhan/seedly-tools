@@ -13,7 +13,7 @@ Licensed Seedly 5.7.x or 5.8.x owners who want the CRM on their computer (or a l
 - `compose.yaml` / `compose.prod.yaml`, `docker/`, `docker.mk`, env examples
 - Demo seed (`owner@acme.dev` and friends) — not Sulus operator accounts
 - A small helper under `apps/web/lib/seedly-docker/`
-- Install-time patches on host URL / CSP / PDF call sites when those files still read `NEXT_PUBLIC_*` only
+- Install-time patches (`bin/install.mjs` → `bin/patch-host.mjs`): self-host URL / CSP / PDF call sites; `cookiePrefix: 'seedly-crm'` + middleware; trust `http://localhost:3100` so get-session is not null when sulus-crm is also on localhost
 
 ## What it is not
 

@@ -19,7 +19,22 @@ CWD = Seedly 5.7.x or 5.8.x checkout:
 node /ABS/seedly-docker-0.1.0/bin/install.mjs --seedly .
 ```
 
-That copies compose / docker / helpers, then `bin/patch-host.mjs` patches host URL + CSP call sites if they still read `NEXT_PUBLIC_CONVEX_*` only. Hosts that already have `getServerConvexUrl` are left alone.
+That copies compose / docker / helpers, then `bin/patch-host.mjs` (called from `install.mjs`) applies host patches. Already-patched files are left alone.
+
+Install is the patch command. Dry-run:
+
+```
+node /ABS/seedly-docker-0.1.0/bin/install.mjs --seedly . --dry-run
+```
+
+Patches (string ops only, never overwrite the file):
+
+- `apps/web/lib/auth-server.ts` + QR/CSP/PDF call sites — self-host Convex URLs if they still read `NEXT_PUBLIC_*` only
+- `convex/authOptions.ts` — `cookiePrefix: 'seedly-crm'` so localhost cookies do not collide with sulus-crm on `:3000` (browsers share cookies across ports)
+- `apps/web/middleware.ts` — `getSessionCookie(..., { cookiePrefix: 'seedly-crm' })`
+- `convex/auth.ts` — trust `http://localhost:3100` and `http://127.0.0.1:3100`
+
+If an older zip was already installed, re-run the same `install.mjs` command so these patches apply.
 
 There is no plan feature toggle.
 

@@ -22,7 +22,9 @@ node /path/to/seedly-docker-0.1.0/bin/install.mjs --seedly .
 
 On a Mac: type `node `, drag the unzipped folder onto the window, then type `/bin/install.mjs --seedly .` and press Return.
 
-**What you should see:** `Installed seedly-docker`. That only copies files and applies a few URL patches. It does not start Docker yet.
+**What you should see:** `Installed seedly-docker`. That copies files and patches a few Seedly files (Convex URLs, cookie name `seedly-crm`, and trust for http://localhost:3100). It does not start Docker yet.
+
+If you already installed an older copy of this zip, run that same `install.mjs` command again so the cookie / :3100 patches apply. Otherwise sign-in can stay blank (`get-session` null) when another CRM is also open on localhost.
 
 ## 2. Start Docker (recommended: hybrid)
 
