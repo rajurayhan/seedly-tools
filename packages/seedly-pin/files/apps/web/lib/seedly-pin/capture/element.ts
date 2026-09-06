@@ -31,17 +31,33 @@ export function describeElement(el: Element): PinnedElement {
   };
 }
 
+function targetFromPoint(x: number, y: number): Element | null {
+  const stack = document.elementsFromPoint(x, y);
+  return stack.find((node) => node instanceof Element && !node.closest('[data-seedly-pin]')) ?? null;
+}
+
+function mountHint(text: string): HTMLDivElement {
+  const hint = document.createElement('div');
+  hint.setAttribute('data-seedly-pin', 'hint');
+  hint.textContent = text;
+  hint.style.cssText =
+    'position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:2147483001;pointer-events:none;border-radius:999px;padding:8px 14px;font:13px/1.3 system-ui,sans-serif;color:#fff;background:rgba(17,24,39,0.92);box-shadow:0 8px 24px rgba(0,0,0,0.25);';
+  document.body.appendChild(hint);
+  return hint;
+}
+
 export function pickElement(): Promise<PinnedElement | null> {
   return new Promise((resolve) => {
+    const hint = mountHint('Click an element to pin · Esc to cancel');
     const highlight = document.createElement('div');
     highlight.setAttribute('data-seedly-pin', 'picker');
     highlight.style.cssText =
-      'position:fixed;pointer-events:none;z-index:2147483000;border:2px solid #2563eb;background:rgba(37,99,235,0.12);';
+      'position:fixed;pointer-events:none;z-index:2147483000;border:2px solid #e11d48;background:rgba(225,29,72,0.12);border-radius:4px;';
     document.body.appendChild(highlight);
 
     const move = (event: MouseEvent) => {
-      const el = document.elementFromPoint(event.clientX, event.clientY);
-      if (!el || el === highlight) return;
+      const el = targetFromPoint(event.clientX, event.clientY);
+      if (!el) return;
       const rect = el.getBoundingClientRect();
       highlight.style.left = `${rect.left}px`;
       highlight.style.top = `${rect.top}px`;
@@ -54,18 +70,15 @@ export function pickElement(): Promise<PinnedElement | null> {
       document.removeEventListener('click', click, true);
       document.removeEventListener('keydown', key, true);
       highlight.remove();
+      hint.remove();
       resolve(value);
     };
 
     const click = (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
-      const el = document.elementFromPoint(event.clientX, event.clientY);
-      if (!el || el === highlight) {
-        finish(null);
-        return;
-      }
-      finish(describeElement(el));
+      const el = targetFromPoint(event.clientX, event.clientY);
+      finish(el ? describeElement(el) : null);
     };
 
     const key = (event: KeyboardEvent) => {
@@ -76,4 +89,54 @@ export function pickElement(): Promise<PinnedElement | null> {
     document.addEventListener('click', click, true);
     document.addEventListener('keydown', key, true);
   });
+}
+
+export function pickPinPoint(): Promise<{ x: number; y: number } | null> {
+  return new Promise((resolve) => {
+    const previousCursor = document.body.style.cursor;
+    document.body.style.cursor = 'crosshair';
+    const hint = mountHint('Click the page to drop a pin · Esc to cancel');
+    const ghost = document.createElement('div');
+    ghost.setAttribute('data-seedly-pin', 'place-ghost');
+    ghost.style.cssText =
+      'position:fixed;pointer-events:none;z-index:2147483000;width:28px;height:40px;margin-left:-14px;margin-top:-40px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.28));';
+    ghost.innerHTML =
+      '<svg viewBox="0 0 28 40" width="28" height="40" aria-hidden="true"><path d="M14 40C14 40 26 24 26 16a12 12 0 1 0-24 0c0 8 12 24 12 24z" fill="#e11d48"/><circle cx="14" cy="15" r="5" fill="#fff"/></svg>';
+    document.body.appendChild(ghost);
+
+    const move = (event: MouseEvent) => {
+      ghost.style.left = `${event.clientX}px`;
+      ghost.style.top = `${event.clientY}px`;
+    };
+
+    const finish = (value: { x: number; y: number } | null) => {
+      document.removeEventListener('mousemove', move, true);
+      document.removeEventListener('click', click, true);
+      document.removeEventListener('keydown', key, true);
+      document.body.style.cursor = previousCursor;
+      ghost.remove();
+      hint.remove();
+      resolve(value);
+    };
+
+    const click = (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      finish({ x: event.clientX, y: event.clientY });
+    };
+
+    const key = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') finish(null);
+    };
+
+    document.addEventListener('mousemove', move, true);
+    document.addEventListener('click', click, true);
+    document.addEventListener('keydown', key, true);
+  });
+}
+
+export function pinPointForElement(el: PinnedElement): { x: number; y: number } | null {
+  const rect = el.boundingRect;
+  if (!rect) return null;
+  return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
 }

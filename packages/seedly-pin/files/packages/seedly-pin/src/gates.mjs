@@ -91,6 +91,10 @@ export function sanitizeMetadata(raw) {
     userActivity: Array.isArray(src.userActivity) ? src.userActivity.slice(-30) : [],
     storageKeys: storage,
     pinnedElement: src.pinnedElement && typeof src.pinnedElement === 'object' ? src.pinnedElement : undefined,
+    pinPoint:
+      src.pinPoint && typeof src.pinPoint === 'object' && typeof src.pinPoint.x === 'number' && typeof src.pinPoint.y === 'number'
+        ? { x: src.pinPoint.x, y: src.pinPoint.y }
+        : undefined,
     source: typeof src.source === 'string' ? src.source : undefined,
   };
 }

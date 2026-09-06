@@ -24,6 +24,7 @@ export type PinMetadata = {
   userActivity?: UserActivity[];
   storageKeys?: { cookies: string[]; localStorage: string[]; sessionStorage: string[] };
   pinnedElement?: PinnedElement;
+  pinPoint?: { x: number; y: number };
   source?: string;
 };
 

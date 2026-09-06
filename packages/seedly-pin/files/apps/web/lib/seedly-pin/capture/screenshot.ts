@@ -6,64 +6,162 @@ export type CaptureBlob = {
   height?: number;
 };
 
+export type PinPoint = { x: number; y: number };
+
+export const PIN_MARKER = {
+  color: '#e11d48',
+  inner: '#ffffff',
+  headRadius: 12,
+  headOffsetY: 25,
+  innerRadius: 5,
+} as const;
+
 function canvasToPng(canvas: HTMLCanvasElement): Promise<CaptureBlob | null> {
   return new Promise((resolve) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          resolve(null);
-          return;
-        }
-        resolve({
-          blob,
-          filename: `pin-${Date.now()}.png`,
-          mimeType: 'image/png',
-          width: canvas.width,
-          height: canvas.height,
-        });
-      },
-      'image/png',
-      0.92,
-    );
+    try {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(null);
+            return;
+          }
+          resolve({
+            blob,
+            filename: `pin-${Date.now()}.png`,
+            mimeType: 'image/png',
+            width: canvas.width,
+            height: canvas.height,
+          });
+        },
+        'image/png',
+        0.92,
+      );
+    } catch {
+      resolve(null);
+    }
   });
 }
 
-/** Visible viewport via SVG foreignObject. Overlay nodes with data-seedly-pin are skipped. */
+function isCaptureChrome(node: Node): boolean {
+  return node instanceof Element && Boolean(node.closest('[data-seedly-pin]'));
+}
+
+function pageBackground(): string {
+  if (typeof document === 'undefined') return '#ffffff';
+  const bg = getComputedStyle(document.body).backgroundColor;
+  if (!bg || bg === 'transparent' || bg === 'rgba(0, 0, 0, 0)') return '#ffffff';
+  return bg;
+}
+
+async function loadToBlob(): Promise<
+  | ((node: HTMLElement, options?: Record<string, unknown>) => Promise<Blob | null>)
+  | null
+> {
+  try {
+    const mod = await import('html-to-image');
+    return typeof mod.toBlob === 'function' ? mod.toBlob : null;
+  } catch {
+    return null;
+  }
+}
+
+export function drawPinMarker(ctx: CanvasRenderingContext2D, point: PinPoint, scale = 1) {
+  const x = point.x;
+  const y = point.y;
+  const r = PIN_MARKER.headRadius * scale;
+  const hy = y - PIN_MARKER.headOffsetY * scale;
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.28)';
+  ctx.shadowBlur = 8 * scale;
+  ctx.shadowOffsetY = 2 * scale;
+  ctx.fillStyle = PIN_MARKER.color;
+  ctx.beginPath();
+  ctx.arc(x, hy, r, Math.PI * 0.82, Math.PI * 0.18, false);
+  ctx.lineTo(x, y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.fillStyle = PIN_MARKER.inner;
+  ctx.beginPath();
+  ctx.arc(x, hy, PIN_MARKER.innerRadius * scale, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function blobToImage(blob: Blob): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('pin image failed'));
+    };
+    image.src = url;
+  });
+}
+
+/** Draw the dropped pin onto an already-captured viewport PNG. */
+export async function stampPinOnCapture(capture: CaptureBlob, point: PinPoint): Promise<CaptureBlob> {
+  if (typeof document === 'undefined') return capture;
+  try {
+    const image = await blobToImage(capture.blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width || capture.width || window.innerWidth;
+    canvas.height = image.height || capture.height || window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return capture;
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const scaleX = canvas.width / (capture.width || window.innerWidth || canvas.width);
+    const scaleY = canvas.height / (capture.height || window.innerHeight || canvas.height);
+    const scale = Number.isFinite(scaleX) && scaleX > 0 ? scaleX : 1;
+    drawPinMarker(ctx, { x: point.x * scaleX, y: point.y * scaleY }, scale);
+    return (await canvasToPng(canvas)) ?? capture;
+  } catch {
+    return capture;
+  }
+}
+
+/** Visible viewport. Overlay nodes with data-seedly-pin are skipped. */
 export async function captureViewport(): Promise<CaptureBlob | null> {
-  if (typeof document === 'undefined') return null;
+  if (typeof document === 'undefined' || !document.body) return null;
   const width = window.innerWidth;
   const height = window.innerHeight;
-  const clone = document.documentElement.cloneNode(true) as HTMLElement;
-  clone.querySelectorAll('[data-seedly-pin]').forEach((node) => node.remove());
-  const html = new XMLSerializer().serializeToString(clone);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-    <foreignObject width="100%" height="100%">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">${html}</div>
-    </foreignObject>
-  </svg>`;
-  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
-  try {
-    const image = new Image();
-    image.crossOrigin = 'anonymous';
-    await new Promise<void>((resolve, reject) => {
-      image.onload = () => resolve();
-      image.onerror = () => reject(new Error('screenshot failed'));
-      image.src = url;
-    });
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(image, 0, 0, width, height);
-    return canvasToPng(canvas);
-  } catch {
-    return captureViewportFallback(width, height);
-  } finally {
-    URL.revokeObjectURL(url);
+  const toBlob = await loadToBlob();
+  if (toBlob) {
+    try {
+      const blob = await toBlob(document.body, {
+        width,
+        height,
+        pixelRatio: 1,
+        cacheBust: true,
+        skipFonts: true,
+        backgroundColor: pageBackground(),
+        filter: (node: Node) => !isCaptureChrome(node),
+      });
+      if (blob) {
+        return {
+          blob,
+          filename: `pin-${Date.now()}.png`,
+          mimeType: blob.type || 'image/png',
+          width,
+          height,
+        };
+      }
+    } catch {
+      // Cross-origin paint can still fail; fall back to a clean card.
+    }
   }
+  return captureViewportFallback(width, height);
+}
+
+export async function captureViewportWithPin(point: PinPoint): Promise<CaptureBlob | null> {
+  const shot = await captureViewport();
+  if (!shot) return null;
+  return stampPinOnCapture(shot, point);
 }
 
 function captureViewportFallback(width: number, height: number): Promise<CaptureBlob | null> {
@@ -104,7 +202,9 @@ export async function recordDisplay(maxMs = 30_000): Promise<CaptureBlob | null>
   if (!navigator.mediaDevices?.getDisplayMedia) return null;
   const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
   const chunks: BlobPart[] = [];
-  const recorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('video/webm') ? 'video/webm' : undefined });
+  const recorder = new MediaRecorder(stream, {
+    mimeType: MediaRecorder.isTypeSupported('video/webm') ? 'video/webm' : undefined,
+  });
   recorder.ondataavailable = (event) => {
     if (event.data.size) chunks.push(event.data);
   };

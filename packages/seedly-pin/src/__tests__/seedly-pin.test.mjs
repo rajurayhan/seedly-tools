@@ -73,12 +73,14 @@ test('sanitizeMetadata keeps capture fields and storage keys only', () => {
     userActivity: [{ type: 'button', text: 'Save', timestamp: 't' }],
     storageKeys: { cookies: ['sid=secret'], localStorage: ['k'], sessionStorage: [] },
     pinnedElement: { cssSelector: '#save' },
+    pinPoint: { x: 12, y: 40 },
   });
   assert.equal(meta.consoleErrors.length, 1);
   assert.equal(meta.networkErrors[0].status, 500);
   assert.equal(meta.userActivity[0].type, 'button');
   assert.deepEqual(meta.storageKeys.cookies, ['sid']);
   assert.equal(meta.pinnedElement.cssSelector, '#save');
+  assert.deepEqual(meta.pinPoint, { x: 12, y: 40 });
 });
 
 test('history is written for status and assignee changes', () => {
@@ -133,13 +135,41 @@ test('FAB stays hidden unless canDrop; overlay captures collectors', () => {
   const fab = readOwned('apps/web/lib/seedly-pin/fab.tsx');
   assert.match(fab, /canDrop/);
   assert.match(fab, /SeedlyPinOverlay/);
+  assert.match(fab, /!open &&/);
   const overlay = readOwned('apps/web/lib/seedly-pin/overlay.tsx');
   assert.match(overlay, /createCaptureSession/);
-  assert.match(overlay, /captureViewport/);
+  assert.match(overlay, /captureViewportWithPin/);
   assert.match(overlay, /pickElement/);
+  assert.match(overlay, /pickPinPoint/);
+  assert.match(overlay, /setPhase\('picking'\)/);
+  assert.equal(overlay.includes('captureDisplayFrame'), false);
+  assert.equal(overlay.includes('recordDisplay'), false);
   const collectors = readOwned('apps/web/lib/seedly-pin/capture/collectors.ts');
   assert.match(collectors, /storageKeyNamesFromWindow/);
   assert.match(collectors, /Object\.keys\(win\.localStorage/);
+});
+
+test('viewport capture uses html-to-image and stamps the pin, never SVG foreignObject', () => {
+  const shot = readOwned('apps/web/lib/seedly-pin/capture/screenshot.ts');
+  assert.equal(shot.includes('foreignObject'), false);
+  assert.match(shot, /html-to-image/);
+  assert.match(shot, /skipFonts: true/);
+  assert.match(shot, /drawPinMarker/);
+  assert.match(shot, /stampPinOnCapture/);
+  assert.match(shot, /canvasToPng/);
+  assert.match(shot, /catch \{/);
+  const picker = readOwned('apps/web/lib/seedly-pin/capture/element.ts');
+  assert.match(picker, /elementsFromPoint/);
+  assert.match(picker, /pickPinPoint/);
+  assert.match(picker, /Click an element to pin/);
+});
+
+test('settings panel uses the CRM settings chrome', () => {
+  const panel = readOwned('apps/web/lib/seedly-pin/settings-panel.tsx');
+  assert.match(panel, /PageHeader/);
+  assert.match(panel, /SettingRow/);
+  assert.match(panel, /Switch/);
+  assert.match(panel, /Enable Pins for this agency/);
 });
 
 test('layout and settings patches are idempotent', () => {
