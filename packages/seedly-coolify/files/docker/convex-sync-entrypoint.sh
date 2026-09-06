@@ -59,9 +59,9 @@ set_env UNSUBSCRIBE_SECRET "${UNSUBSCRIBE_SECRET:-}"
 set_env PREFERENCES_SECRET "${PREFERENCES_SECRET:-}"
 set_env ENCRYPTION_KEY "${ENCRYPTION_KEY:-}"
 set_env INTERNAL_API_SECRET "${INTERNAL_API_SECRET:-}"
-set_env SITE_URL "${SITE_URL:-http://localhost:3000}"
-set_env FRONTEND_URL "${FRONTEND_URL:-http://localhost:3000}"
-set_env NEXT_PUBLIC_APP_URL "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+set_env SITE_URL "${SITE_URL:-http://localhost:3100}"
+set_env FRONTEND_URL "${FRONTEND_URL:-http://localhost:3100}"
+set_env NEXT_PUBLIC_APP_URL "${NEXT_PUBLIC_APP_URL:-http://localhost:3100}"
 set_env INTERNAL_APP_URL "${INTERNAL_APP_URL:-http://web:3000}"
 
 if [ "${CONVEX_SYNC_ONCE:-}" = "1" ]; then

@@ -17,9 +17,9 @@ docker-up: docker-env ## Build and start Convex + Next.js (dev, hot reload)
 
 docker-up-backend: docker-env ## Convex only — run Next.js on the host (hot reload)
 	@$(COMPOSE) --env-file $(ENV_FILE) stop web 2>/dev/null || true
-	INTERNAL_APP_URL=http://host.docker.internal:3000 $(COMPOSE) --env-file $(ENV_FILE) up --build -d convex-backend convex-dashboard convex-init convex-sync
+	INTERNAL_APP_URL=http://host.docker.internal:3100 $(COMPOSE) --env-file $(ENV_FILE) up --build -d convex-backend convex-dashboard convex-init convex-sync
 	@echo "Convex is up. Copy apps/web/.env.docker-hybrid.example to apps/web/.env.local if needed,"
-	@echo "then: npx pnpm --filter @seedly-crm/web dev"
+	@echo "then: npx pnpm --filter @seedly-crm/web exec next dev --port 3100"
 
 docker-up-prod: docker-env ## Production-like images (no bind mounts)
 	$(COMPOSE) --env-file $(ENV_FILE) -f compose.yaml -f compose.prod.yaml up --build

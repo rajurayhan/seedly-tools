@@ -1,8 +1,11 @@
 # seedly-crm local stack — Next.js + self-hosted Convex (no Convex Cloud)
 #
 #   make -f docker.mk docker-up
-#   open http://localhost:3000
-#   Convex dashboard: http://localhost:6791
+#   open http://localhost:3100
+#   Convex dashboard: http://localhost:6891
+#
+# Host ports are offset from sulus-crm (3000/3210/3211/6791) so both
+# stacks can run on one machine. Container-internal ports stay 3000/3210/3211.
 #
 # Requires .env.docker (created by `make docker-env`).
 
@@ -14,15 +17,15 @@ services:
     stop_grace_period: 10s
     stop_signal: SIGINT
     ports:
-      - "${CONVEX_PORT:-3210}:3210"
-      - "${CONVEX_SITE_PORT:-3211}:3211"
+      - "${CONVEX_PORT:-3310}:3210"
+      - "${CONVEX_SITE_PORT:-3311}:3211"
     volumes:
       - convex-data:/convex/data
     environment:
       INSTANCE_NAME: ${INSTANCE_NAME:-seedly-crm-dev}
       INSTANCE_SECRET: ${INSTANCE_SECRET:?Set INSTANCE_SECRET in .env.docker — run make docker-env}
-      CONVEX_CLOUD_ORIGIN: ${CONVEX_CLOUD_ORIGIN:-http://127.0.0.1:3210}
-      CONVEX_SITE_ORIGIN: ${CONVEX_SITE_ORIGIN:-http://127.0.0.1:3211}
+      CONVEX_CLOUD_ORIGIN: ${CONVEX_CLOUD_ORIGIN:-http://127.0.0.1:3310}
+      CONVEX_SITE_ORIGIN: ${CONVEX_SITE_ORIGIN:-http://127.0.0.1:3311}
       DISABLE_BEACON: ${DISABLE_BEACON:-true}
       RUST_LOG: ${RUST_LOG:-info}
       DOCUMENT_RETENTION_DELAY: ${DOCUMENT_RETENTION_DELAY:-172800}
@@ -38,9 +41,9 @@ services:
     stop_grace_period: 10s
     stop_signal: SIGINT
     ports:
-      - "${CONVEX_DASHBOARD_PORT:-6791}:6791"
+      - "${CONVEX_DASHBOARD_PORT:-6891}:6791"
     environment:
-      NEXT_PUBLIC_DEPLOYMENT_URL: ${NEXT_PUBLIC_DEPLOYMENT_URL:-http://127.0.0.1:3210}
+      NEXT_PUBLIC_DEPLOYMENT_URL: ${NEXT_PUBLIC_DEPLOYMENT_URL:-http://127.0.0.1:3310}
     depends_on:
       convex-backend:
         condition: service_healthy
@@ -70,9 +73,9 @@ services:
       - .env.docker
     environment:
       CONVEX_SELF_HOSTED_URL: http://convex-backend:3210
-      SITE_URL: ${SITE_URL:-http://localhost:3000}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      SITE_URL: ${SITE_URL:-http://localhost:3100}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3100}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3100}
       INTERNAL_APP_URL: ${INTERNAL_APP_URL:-http://web:3000}
     volumes:
       - ./apps:/app/apps
@@ -102,20 +105,20 @@ services:
     init: true
     shm_size: "1gb"
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_PORT:-3100}:3000"
     env_file:
       - .env.docker
     environment:
       NODE_ENV: development
       WATCHPACK_POLLING: "true"
       CHOKIDAR_USEPOLLING: "true"
-      NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://127.0.0.1:3210}
-      NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL:-http://127.0.0.1:3211}
+      NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://127.0.0.1:3310}
+      NEXT_PUBLIC_CONVEX_SITE_URL: ${NEXT_PUBLIC_CONVEX_SITE_URL:-http://127.0.0.1:3311}
       CONVEX_URL: http://convex-backend:3210
       CONVEX_SITE_URL: http://convex-backend:3211
-      SITE_URL: ${SITE_URL:-http://localhost:3000}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      SITE_URL: ${SITE_URL:-http://localhost:3100}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3100}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3100}
       PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
     volumes:
       - ./apps:/app/apps

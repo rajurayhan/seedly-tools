@@ -71,9 +71,9 @@ FROM deps AS prod
 
 COPY . .
 
-ARG NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3210
-ARG NEXT_PUBLIC_CONVEX_SITE_URL=http://127.0.0.1:3211
-ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ARG NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3310
+ARG NEXT_PUBLIC_CONVEX_SITE_URL=http://127.0.0.1:3311
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3100
 
 # NEXT_PUBLIC_* is loopback so the browser can reach published ports.
 # CONVEX_* is the compose service name so the Node server does not call
