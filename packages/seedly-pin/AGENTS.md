@@ -30,7 +30,7 @@ npx pnpm install
 npx pnpm --filter @seedly-crm/web typecheck
 ```
 
-Agency owner enables the add-on at **Settings → Pins**. Not Admin → Plans.
+Agency owner enables the add-on from the **Agency navbar → Pins** (or Agency **Settings → Pins**). Not Admin → Plans. The installer also adds Pins to that Agency list so Superadmin mode can find it.
 
 If you install SeedlyMCP **after** SeedlyPin, that zip’s installer looks for `mcp-bridge.mjs` on the host and re-merges pin tools itself. You do not need to re-run this zip unless the host has an older SeedlyPin without the bridge file.
 

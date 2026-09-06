@@ -13,6 +13,9 @@ const LAYOUT_IMPORT = "import { SeedlyPinFab } from '@/lib/seedly-pin/fab'; // s
 const LAYOUT_MOUNT = '          <SeedlyPinFab />';
 
 const SETTINGS_TAB = "  { label: 'Pins', href: '/settings/pins' }, // seedly-pin";
+const SIDEBAR_NAV = "  { label: 'Pins', href: '/settings/pins', icon: MapPin }, // seedly-pin";
+const SIDEBAR_ROOT = "  '/settings/pins', // seedly-pin";
+const SIDEBAR_ICON = '  MapPin,';
 
 function read(abs) {
   return existsSync(abs) ? readFileSync(abs, 'utf8') : null;
@@ -64,6 +67,43 @@ export function patchSettingsLayout(src) {
   return { src: next, ok: next.includes('/settings/pins') };
 }
 
+export function patchSidebar(src) {
+  let next = src;
+  if (!next.includes('MapPin')) {
+    if (next.includes("} from 'lucide-react'")) {
+      next = next.replace("} from 'lucide-react'", `${SIDEBAR_ICON}\n} from 'lucide-react'`);
+    } else {
+      return { src: next, ok: false };
+    }
+  }
+  if (!next.includes(SIDEBAR_NAV) && !next.includes("href: '/settings/pins', icon: MapPin")) {
+    if (next.includes('const adminNavItems: NavItem[] = [')) {
+      next = next.replace(
+        'const adminNavItems: NavItem[] = [',
+        `const adminNavItems: NavItem[] = [\n${SIDEBAR_NAV}`,
+      );
+    } else {
+      return { src: next, ok: false };
+    }
+  }
+  if (!next.includes(SIDEBAR_ROOT)) {
+    if (next.includes("  '/settings/access',")) {
+      next = next.replace("  '/settings/access',", `  '/settings/access',\n${SIDEBAR_ROOT}`);
+    } else if (next.includes('const ROOT_SCOPED_PREFIXES = [')) {
+      next = next.replace(
+        'const ROOT_SCOPED_PREFIXES = [',
+        `const ROOT_SCOPED_PREFIXES = [\n${SIDEBAR_ROOT}`,
+      );
+    } else {
+      return { src: next, ok: false };
+    }
+  }
+  return {
+    src: next,
+    ok: next.includes("href: '/settings/pins'") && next.includes("'/settings/pins'"),
+  };
+}
+
 export async function applyHostPatches(checkout, { dryRun = false, log = console, requireCore = true } = {}) {
   const changed = [];
   const gaps = [];
@@ -91,6 +131,18 @@ export async function applyHostPatches(checkout, { dryRun = false, log = console
     else if (src !== settings) {
       if (!dryRun) write(join(checkout, settingsRel), src);
       changed.push(settingsRel);
+    }
+  }
+
+  const sidebarRel = 'apps/web/components/navigation/sidebar.tsx';
+  const sidebar = read(join(checkout, sidebarRel));
+  if (sidebar) {
+    const { src, ok } = patchSidebar(sidebar);
+    if (!ok) {
+      log.warn?.(`${sidebarRel} has no adminNavItems insert point — Pins will not appear on the Agency navbar`);
+    } else if (src !== sidebar) {
+      if (!dryRun) write(join(checkout, sidebarRel), src);
+      changed.push(sidebarRel);
     }
   }
 
@@ -130,6 +182,11 @@ export async function revertHostPatches(checkout, { dryRun = false, log = consol
   ]);
   revertFile('apps/web/app/(dashboard)/settings/layout.tsx', [
     (s) => s.replace(`${SETTINGS_TAB}\n`, ''),
+  ]);
+  revertFile('apps/web/components/navigation/sidebar.tsx', [
+    (s) => s.replace(`${SIDEBAR_NAV}\n`, ''),
+    (s) => s.replace(`${SIDEBAR_ROOT}\n`, ''),
+    (s) => (s.includes(SIDEBAR_NAV) ? s : s.replace(`${SIDEBAR_ICON}\n`, '')),
   ]);
 
   if (revertPinOpenApi({ checkout, dryRun, log }).changed) changed.push('docs/openapi.yaml');

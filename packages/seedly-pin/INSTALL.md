@@ -43,9 +43,10 @@ Publish the website the way you already do. This add-on also changes the backend
 ## 4. Turn it on
 
 1. Sign in as an **agency owner**.
-2. Open **Settings → Pins**.
-3. Turn **SeedlyPin** on. Choose which roles can drop a pin and which roles can triage.
-4. Open a location. Use **Drop Pin**. Open **Pins** in the sidebar to assign and close tickets.
+2. Switch the top-left picker to **Agency** (the Superadmin list: Plans, Brands, Logs).
+3. Open **Pins** in that Agency navbar — or **Settings**, then the **Pins** tab.
+4. Turn **SeedlyPin** on. Choose which roles can drop a pin and which roles can triage.
+5. Open a location. Use **Drop Pin**. Open **Pins** in the location sidebar to assign and close tickets.
 
 There is no switch under Admin → Plans. This is agency-wide.
 

@@ -25,7 +25,7 @@ import {
   stripPinAllowMap,
   stripPinMarkedBlock,
 } from '../../bin/allow-map.mjs';
-import { patchLayout, patchSettingsLayout } from '../../bin/patch-host.mjs';
+import { patchLayout, patchSettingsLayout, patchSidebar } from '../../bin/patch-host.mjs';
 import { applySeams } from '../../../toolkit/src/seams.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -169,6 +169,26 @@ export default function L() {
   assert.equal(s1.ok && s2.ok, true);
   assert.equal(s1.src, s2.src);
   assert.match(s1.src, /\/settings\/pins/);
+
+  const sidebar = `import {
+  Settings,
+  QrCode,
+} from 'lucide-react';
+const adminNavItems: NavItem[] = [
+  { label: 'Plans', href: '/admin/plans', icon: Layers },
+];
+const ROOT_SCOPED_PREFIXES = [
+  '/admin',
+  '/settings/access',
+];
+`;
+  const b1 = patchSidebar(sidebar);
+  const b2 = patchSidebar(b1.src);
+  assert.equal(b1.ok && b2.ok, true);
+  assert.equal(b1.src, b2.src);
+  assert.match(b1.src, /href: '\/settings\/pins'/);
+  assert.match(b1.src, /'\/settings\/pins', \/\/ seedly-pin/);
+  assert.match(b1.src, /MapPin/);
 });
 
 test('OpenAPI insert is idempotent and includes export operationId', () => {
