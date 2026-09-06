@@ -11,6 +11,8 @@ SKU playbooks (prefer these when the zip is named):
 - [HighLevel import AGENTS.md](../packages/ghl-import/AGENTS.md)
 - [Seedly Docker AGENTS.md](../packages/seedly-docker/AGENTS.md)
 - [Seedly Coolify AGENTS.md](../packages/seedly-coolify/AGENTS.md)
+- [Login as location user AGENTS.md](../packages/login-as/AGENTS.md)
+- [SeedlyPin AGENTS.md](../packages/seedly-pin/AGENTS.md)
 
 ## Hard rules
 
@@ -44,7 +46,7 @@ npx pnpm --filter @seedly-crm/web typecheck
 
 Remind the owner: Vercel/website deploy is their usual frontend publish. Convex backend changes need `npx convex deploy` — explain first, wait for yes.
 
-Turn the plan feature on in Admin → Plans. The key is in the SKU playbook (`seedly_mcp`, `ghl_import`, …).
+Turn the plan feature on in Admin → Plans. The key is in the SKU playbook (`seedly_mcp`, `ghl_import`, `login_as`, …).
 
 ## Verify
 

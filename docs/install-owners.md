@@ -8,6 +8,8 @@ Each zip also has its own owner guide. Start there if you already know which add
 - [HighLevel import](../packages/ghl-import/INSTALL.md)
 - [Seedly Docker](../packages/seedly-docker/INSTALL.md)
 - [Seedly Coolify](../packages/seedly-coolify/INSTALL.md)
+- [Login as location user](../packages/login-as/INSTALL.md)
+- [SeedlyPin](../packages/seedly-pin/INSTALL.md)
 
 If an assistant (Cursor, Claude) is doing the typing, send them [install-agents.md](install-agents.md).
 

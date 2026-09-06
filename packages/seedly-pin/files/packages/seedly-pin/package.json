@@ -1,0 +1,6 @@
+{
+  "name": "@seedly-crm/seedly-pin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module"
+}

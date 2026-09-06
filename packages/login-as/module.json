@@ -1,0 +1,22 @@
+{
+  "name": "login-as",
+  "version": "0.1.0",
+  "extensionApiVersion": 1,
+  "seedlyRange": ">=5.8.0 <5.9.0",
+  "ownedFiles": [
+    "apps/web/lib/login-as/bar.tsx",
+    "apps/web/lib/login-as/menu.tsx",
+    "apps/web/lib/login-as/nav.ts",
+    "apps/web/lib/login-as/picker.tsx",
+    "apps/web/lib/login-as/signout.ts",
+    "apps/web/lib/login-as/subjects.ts",
+    "convex/loginAs/api.ts",
+    "convex/loginAs/moduleSubjects.ts",
+    "convex/loginAs/overlay.ts",
+    "convex/loginAsSchema.ts",
+    "packages/login-as/package.json",
+    "packages/login-as/src/gates.mjs",
+    "packages/login-as/src/guards.ts",
+    "packages/login-as/src/permissions.ts"
+  ]
+}

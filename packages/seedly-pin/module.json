@@ -1,0 +1,30 @@
+{
+  "name": "seedly-pin",
+  "version": "0.1.0",
+  "extensionApiVersion": 1,
+  "seedlyRange": ">=5.8.0 <5.9.0",
+  "ownedFiles": [
+    "apps/web/app/(dashboard)/location/[locationId]/pins/[pinId]/page.tsx",
+    "apps/web/app/(dashboard)/location/[locationId]/pins/page.tsx",
+    "apps/web/app/(dashboard)/settings/pins/page.tsx",
+    "apps/web/lib/seedly-pin/capture/annotate.tsx",
+    "apps/web/lib/seedly-pin/capture/collectors.ts",
+    "apps/web/lib/seedly-pin/capture/element.ts",
+    "apps/web/lib/seedly-pin/capture/metadata.ts",
+    "apps/web/lib/seedly-pin/capture/screenshot.ts",
+    "apps/web/lib/seedly-pin/fab.tsx",
+    "apps/web/lib/seedly-pin/inbox.tsx",
+    "apps/web/lib/seedly-pin/nav.ts",
+    "apps/web/lib/seedly-pin/overlay.tsx",
+    "apps/web/lib/seedly-pin/settings-panel.tsx",
+    "apps/web/lib/seedly-pin/subjects.ts",
+    "convex/seedlyPin/api.ts",
+    "convex/seedlyPin/internal.ts",
+    "convex/seedlyPin/moduleSubjects.ts",
+    "convex/seedlyPin/routes.ts",
+    "convex/seedlyPinSchema.ts",
+    "packages/seedly-pin/package.json",
+    "packages/seedly-pin/src/gates.mjs",
+    "packages/seedly-pin/src/permissions.ts"
+  ]
+}

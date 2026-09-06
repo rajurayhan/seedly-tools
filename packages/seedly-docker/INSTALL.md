@@ -31,10 +31,10 @@ This keeps the website on your computer so edits show up immediately. Convex sta
 ```
 make -f docker.mk docker-up-backend
 cp apps/web/.env.docker-hybrid.example apps/web/.env.local
-npx pnpm --filter @seedly-crm/web dev
+npx pnpm --filter @seedly-crm/web exec next dev --port 3100
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3100.
 
 Do **not** set `CONVEX_DEPLOYMENT` in `apps/web/.env.local`. That binds Convex Cloud and fights this stack.
 
@@ -64,7 +64,7 @@ Then sign in as:
 
 ## 4. What still needs the internet
 
-Self-hosted Convex replaces Convex Cloud only. Twilio, email, Stripe, Google, and Zoom still go out. For inbound webhooks on your laptop, point the provider at a tunnel to `http://127.0.0.1:3211`.
+Self-hosted Convex replaces Convex Cloud only. Twilio, email, Stripe, Google, and Zoom still go out. For inbound webhooks on your laptop, point the provider at a tunnel to `http://127.0.0.1:3311`.
 
 ## Check / remove
 
