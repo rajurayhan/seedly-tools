@@ -1,0 +1,235 @@
+{
+  "merges": [
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "loginAsTables",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { loginAsTables } from '../loginAsSchema';",
+          "marker": "from '../loginAsSchema'"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["...ghlImportTables,", "...seedlyMcpTables,", "...goseedlyTables,", "..._m0.extensionTables,"],
+          "insert": "\n  ...loginAsTables,",
+          "fallback": {
+            "after": "export const extensionTables = {",
+            "insert": "\n  ...loginAsTables,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "Login as location user",
+      "ops": [
+        {
+          "kind": "ensureContains",
+          "needle": "Login as location user",
+          "insert": "// Login as location user tables are merged here. Do not let any installer overwrite this file."
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/snapshot.ts",
+      "ifMissing": "'loginAsSessions'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionPrivateTables: readonly string[] = [",
+          "insert": "\n  'loginAsSessions',\n  'loginAsAudit',"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extensions.ts",
+      "ifMissing": "login-as/nav",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _loginAs from './login-as/nav';",
+          "marker": "login-as/nav",
+          "preferAfter": "import * as _m0 from './dispatch/nav';"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavItems: ExtensionNavItem[] = [",
+          "insert": "\n  ..._loginAs.extensionNavItems,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavFeatureMap: Record<string, string> = {",
+          "insert": "\n  ..._loginAs.extensionNavFeatureMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionSidebarSubjectMap: Record<string, Subjects> = {",
+          "insert": "\n  ..._loginAs.extensionSidebarSubjectMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionRoutePermissions: { path: string; subject: Subjects }[] = [",
+          "insert": "\n  ..._loginAs.extensionRoutePermissions,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-plan-features.ts",
+      "ifMissing": "key: 'login_as'",
+      "ops": [
+        {
+          "kind": "insertPlanFeature",
+          "feature": {
+            "key": "login_as",
+            "label": "Login as location user",
+            "group": "Add-ons"
+          }
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-subjects.ts",
+      "ifMissing": "login-as/subjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _loginAs from './login-as/subjects';",
+          "marker": "login-as/subjects"
+        },
+        {
+          "kind": "replace",
+          "from": "export const extensionSubjects = [..._m0.extensionSubjects] as const;",
+          "to": "export const extensionSubjects = [..._m0.extensionSubjects, ..._loginAs.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_loginAs.extensionSubjects",
+          "from": "..._m0.extensionSubjects]",
+          "to": "..._m0.extensionSubjects, ..._loginAs.extensionSubjects]"
+        }
+      ]
+    },
+    {
+      "file": "packages/shared/src/extensions.ts",
+      "ifMissing": "login-as/src/permissions",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _loginAs from '../../login-as/src/permissions';",
+          "marker": "login-as/src/permissions"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "..._m0.extensionPermissionModules,",
+          "insert": "\n  ..._loginAs.extensionPermissionModules,"
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/subjects.ts",
+      "ifMissing": "loginAs/moduleSubjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _loginAs from '../loginAs/moduleSubjects';",
+          "marker": "loginAs/moduleSubjects"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "..._m0.extensionModuleSubjects,",
+          "insert": "\n  ..._loginAs.extensionModuleSubjects,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-signout-hooks.ts",
+      "ifMissing": "id: 'login-as'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionSignOutHooks: ExtensionSignOutHook[] = [",
+          "insert": "\n  { id: 'login-as', run: () => import('./login-as/signout').then((m) => m.stopLoginAsOnSignOut()) },"
+        }
+      ]
+    }
+  ],
+  "uninstall": {
+    "stripLines": [
+      {
+        "file": "convex/extensions/index.ts",
+        "pattern": "loginAs|login-as|login_as|loginAsSessions|loginAsAudit|Login as location user"
+      },
+      {
+        "file": "convex/extensions/snapshot.ts",
+        "pattern": "loginAs|login-as|login_as|loginAsSessions|loginAsAudit"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "pattern": "login-as|_loginAs"
+      },
+      {
+        "file": "apps/web/lib/extension-subjects.ts",
+        "pattern": "login-as|_loginAs"
+      },
+      {
+        "file": "packages/shared/src/extensions.ts",
+        "pattern": "login-as|_loginAs"
+      },
+      {
+        "file": "convex/extensions/subjects.ts",
+        "pattern": "loginAs|_loginAs"
+      },
+      {
+        "file": "apps/web/lib/extension-signout-hooks.ts",
+        "pattern": "login-as|loginAs"
+      }
+    ],
+    "stripPlanFeatures": [
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "key": "login_as"
+      }
+    ]
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "convex/extensions/index.ts",
+        "needle": "loginAsTables",
+        "message": "extensions/index.ts spreads loginAsTables"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "needle": "login-as/nav",
+        "message": "extensions.ts imports login-as nav"
+      },
+      {
+        "file": "apps/web/lib/extension-plan-features.ts",
+        "needle": "key: 'login_as'",
+        "message": "plan features include login_as"
+      },
+      {
+        "file": "apps/web/lib/extension-signout-hooks.ts",
+        "needle": "id: 'login-as'",
+        "message": "sign-out hooks include login-as"
+      },
+      {
+        "file": "convex/_helpers.ts",
+        "needle": "applyAddonLoginAsOverlay",
+        "message": "getAuthContext calls applyAddonLoginAsOverlay"
+      },
+      {
+        "file": "apps/web/app/(dashboard)/layout.tsx",
+        "needle": "LoginAsBar",
+        "message": "dashboard layout mounts LoginAsBar"
+      },
+      {
+        "file": "apps/web/components/navigation/topbar.tsx",
+        "needle": "LoginAsMenuItem",
+        "message": "topbar user menu includes Login as location user"
+      }
+    ],
+    "zeroImport": ["apps/web/lib/extension-plan-features.ts"]
+  }
+}

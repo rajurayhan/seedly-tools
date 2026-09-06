@@ -13,7 +13,7 @@ Do not add SKUs here that are not on this list.
 3. [Seedly Docker](seedly-docker.md) — free local self-host pack
 4. [Seedly Coolify](seedly-coolify.md) — free VPS self-host pack (includes Docker)
 5. [SeedlyPin](seedly-pin.md) — hosted Pins plus a thin widget zip
-6. [Login As](login-as.md) — agency owner opens a location as that user
+6. [Login as location user](login-as.md) — agency owner opens a location as that user
 7. [Native agent](native-agent.md) — dashboard helper that only uses SeedlyMCP
 8. [Connectors](connectors.md) — first named outbound system, not a generic OAuth kit
 
@@ -31,7 +31,7 @@ What we will not sell: [Out of scope](out-of-scope.md).
 | Seedly Docker | 1 | Zip (free) | On the shelf |
 | Seedly Coolify | 1 | Zip (free) | On the shelf |
 | SeedlyPin | 2 | Hosted + thin zip | Planned |
-| Login As (agency) | 3 | Zip | Planned |
+| Login as location user | 3 | Zip | On the shelf |
 | Native agent | 4 | Zip | Planned |
 | First connector | 5 | Zip | Planned |
 

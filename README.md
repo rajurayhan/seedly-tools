@@ -17,7 +17,7 @@ Every planned item is written up in [docs/](docs/README.md).
 | [HighLevel import](docs/ghl-import.md) | On the shelf (`packages/ghl-import`) |
 | [SeedlyMCP](docs/seedly-mcp.md) | On the shelf (`packages/seedly-mcp`) |
 | [SeedlyPin](docs/seedly-pin.md) | Planned — hosted + thin zip |
-| [Login As](docs/login-as.md) | Planned — agency only |
+| [Login as location user](docs/login-as.md) | On the shelf (`packages/login-as`) |
 | [Native agent](docs/native-agent.md) | Planned — after SeedlyMCP |
 | [Connectors](docs/connectors.md) | Planned — named system, not “OAuth” |
 | [Out of scope](docs/out-of-scope.md) | Will not sell |
@@ -28,6 +28,7 @@ Every planned item is written up in [docs/](docs/README.md).
 | --- | --- |
 | `packages/ghl-import` | HighLevel import: sidebar Import row, read-only GHL token, dry-run then import |
 | `packages/seedly-mcp` | SeedlyMCP: local stdio + remote `/seedly-mcp` for Cursor / Claude |
+| `packages/login-as` | Login as location user: agency owner opens a location as that user |
 | `packages/toolkit` | Shared install / uninstall / pack / doctor. Vendored into every buyer zip |
 
 ## Pack a buyer zip
@@ -37,6 +38,7 @@ From this folder:
 ```
 node scripts/pack.mjs ghl-import
 node scripts/pack.mjs seedly-mcp
+node scripts/pack.mjs login-as
 ```
 
 Writes `dist/<sku>-<version>.zip`. The zip includes the toolkit so the buyer does not need this repo.
@@ -61,7 +63,7 @@ License terms for the add-on source are in [ADDON-LICENSE.md](ADDON-LICENSE.md).
 ## Tests
 
 ```
-node --test packages/toolkit/src/__tests__/*.test.mjs packages/seedly-mcp/src/__tests__/*.test.mjs
+node --test packages/toolkit/src/__tests__/*.test.mjs packages/seedly-mcp/src/__tests__/*.test.mjs packages/login-as/src/__tests__/*.test.mjs
 ```
 
 Tests use `fixtures/seedly-host/`. They do not install into a real CRM checkout.
