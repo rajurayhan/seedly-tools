@@ -145,12 +145,25 @@ test('FAB stays hidden unless canDrop; overlay captures collectors', () => {
   assert.match(overlay, /pickElement/);
   assert.match(overlay, /pickPinPoint/);
   assert.match(overlay, /setPhase\('picking'\)/);
-  assert.match(overlay, /browserUploadUrl/);
+  assert.match(overlay, /\/api\/seedly-pin\/upload/);
   assert.equal(overlay.includes('captureDisplayFrame'), false);
+  assert.equal(overlay.includes('127.0.0.1'), false);
   assert.equal(overlay.includes('recordDisplay'), false);
   const collectors = readOwned('apps/web/lib/seedly-pin/capture/collectors.ts');
   assert.match(collectors, /storageKeyNamesFromWindow/);
   assert.match(collectors, /Object\.keys\(win\.localStorage/);
+});
+
+test('screenshot upload stays same-origin so Docker Convex CORS cannot block it', () => {
+  const route = readOwned('apps/web/app/api/seedly-pin/upload/route.ts');
+  assert.match(route, /pinStorageUploadUrl/);
+  assert.match(route, /\/api\/storage\/upload/);
+  assert.match(route, /x-seedly-pin-upload-token/);
+  const upload = readOwned('apps/web/lib/seedly-pin/upload.ts');
+  assert.match(upload, /pinUploadToken/);
+  const moduleJson = JSON.parse(readFileSync(join(kitRoot, 'module.json'), 'utf8'));
+  assert.ok(moduleJson.ownedFiles.includes('apps/web/app/api/seedly-pin/upload/route.ts'));
+  assert.ok(moduleJson.ownedFiles.includes('apps/web/lib/seedly-pin/upload.ts'));
 });
 
 test('annotate commits a snapshot so a cleared draft cannot paint null', () => {

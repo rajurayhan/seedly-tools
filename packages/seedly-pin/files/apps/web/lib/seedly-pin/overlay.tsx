@@ -16,6 +16,7 @@ import {
   type CaptureBlob,
   type PinPoint,
 } from './capture/screenshot';
+import { pinUploadTokenFromUrl } from './upload';
 
 const createPinRef = makeFunctionReference<'mutation'>('seedlyPin/api:createPin');
 const uploadUrlRef = makeFunctionReference<'mutation'>('seedlyPin/api:generateUploadUrl');
@@ -28,30 +29,6 @@ type Props = {
 type Phase = 'placing' | 'picking' | 'capturing' | 'form';
 
 const PRIORITIES = ['lowest', 'low', 'medium', 'high', 'highest'] as const;
-
-function browserUploadUrl(url: string): string {
-  if (!url) return url;
-  try {
-    const parsed = new URL(url);
-    const site = process.env.NEXT_PUBLIC_CONVEX_SITE_URL;
-    if (!site) return url;
-    const publicSite = new URL(site);
-    const internalHost =
-      parsed.hostname === 'convex-backend' ||
-      parsed.hostname === '0.0.0.0' ||
-      parsed.hostname === 'host.docker.internal';
-    const localPortMismatch =
-      (parsed.hostname === '127.0.0.1' || parsed.hostname === 'localhost') && parsed.port !== publicSite.port;
-    if (internalHost || localPortMismatch) {
-      parsed.protocol = publicSite.protocol;
-      parsed.host = publicSite.host;
-      return parsed.toString();
-    }
-  } catch {
-    return url;
-  }
-  return url;
-}
 
 function afterPaint(): Promise<void> {
   return new Promise((resolve) => {
@@ -146,10 +123,14 @@ export function SeedlyPinOverlay({ open, onClose }: Props) {
 
   const upload = async (file: CaptureBlob) => {
     const minted = await generateUploadUrl({});
-    const url = browserUploadUrl(typeof minted === 'string' ? minted : '');
-    if (!url) throw new Error('Could not start the screenshot upload.');
+    const token = typeof minted === 'string' ? pinUploadTokenFromUrl(minted) : null;
+    if (!token) throw new Error('Could not start the screenshot upload.');
     const body = new File([file.blob], file.filename, { type: file.mimeType || 'image/png' });
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': body.type }, body });
+    const res = await fetch('/api/seedly-pin/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': body.type, 'x-seedly-pin-upload-token': token },
+      body,
+    });
     if (!res.ok) {
       throw new Error(`Screenshot upload failed (${res.status}). Try a smaller capture.`);
     }
