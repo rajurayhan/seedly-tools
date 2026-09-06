@@ -5,7 +5,7 @@ import { useMutation } from 'convex/react';
 import { makeFunctionReference } from 'convex/server';
 import { Camera, MousePointer2, X } from 'lucide-react';
 import { Button, Input, Label, Textarea, toast } from '@seedly-crm/ui';
-import { AnnotateCanvas, type AnnotateShape } from './capture/annotate';
+import { AnnotateCanvas, isAnnotateShape, type AnnotateShape } from './capture/annotate';
 import { createCaptureSession } from './capture/collectors';
 import { pickElement, pickPinPoint, pinPointForElement } from './capture/element';
 import { capturePageMetadata, type PinnedElement } from './capture/metadata';
@@ -28,6 +28,30 @@ type Props = {
 type Phase = 'placing' | 'picking' | 'capturing' | 'form';
 
 const PRIORITIES = ['lowest', 'low', 'medium', 'high', 'highest'] as const;
+
+function browserUploadUrl(url: string): string {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    const site = process.env.NEXT_PUBLIC_CONVEX_SITE_URL;
+    if (!site) return url;
+    const publicSite = new URL(site);
+    const internalHost =
+      parsed.hostname === 'convex-backend' ||
+      parsed.hostname === '0.0.0.0' ||
+      parsed.hostname === 'host.docker.internal';
+    const localPortMismatch =
+      (parsed.hostname === '127.0.0.1' || parsed.hostname === 'localhost') && parsed.port !== publicSite.port;
+    if (internalHost || localPortMismatch) {
+      parsed.protocol = publicSite.protocol;
+      parsed.host = publicSite.host;
+      return parsed.toString();
+    }
+  } catch {
+    return url;
+  }
+  return url;
+}
 
 function afterPaint(): Promise<void> {
   return new Promise((resolve) => {
@@ -121,15 +145,21 @@ export function SeedlyPinOverlay({ open, onClose }: Props) {
   }
 
   const upload = async (file: CaptureBlob) => {
-    const url = await generateUploadUrl();
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': file.mimeType }, body: file.blob });
-    if (!res.ok) throw new Error('Upload failed');
-    const json = (await res.json()) as { storageId: string };
+    const minted = await generateUploadUrl({});
+    const url = browserUploadUrl(typeof minted === 'string' ? minted : '');
+    if (!url) throw new Error('Could not start the screenshot upload.');
+    const body = new File([file.blob], file.filename, { type: file.mimeType || 'image/png' });
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': body.type }, body });
+    if (!res.ok) {
+      throw new Error(`Screenshot upload failed (${res.status}). Try a smaller capture.`);
+    }
+    const json = (await res.json()) as { storageId?: string };
+    if (!json.storageId) throw new Error('Screenshot upload did not return a file id.');
     return {
       storageId: json.storageId,
       type: file.mimeType.startsWith('video/') ? 'video' : 'screenshot',
       filename: file.filename,
-      mimeType: file.mimeType,
+      mimeType: file.mimeType || 'image/png',
       sizeBytes: file.blob.size,
       width: file.width,
       height: file.height,
@@ -148,7 +178,7 @@ export function SeedlyPinOverlay({ open, onClose }: Props) {
         description,
         priority,
         source: 'capture',
-        annotations,
+        annotations: annotations.filter(isAnnotateShape),
         metadata: capturePageMetadata({
           ...snap,
           pinnedElement: element ?? undefined,

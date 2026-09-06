@@ -44,6 +44,13 @@ export function AnnotateCanvas({ imageUrl, onChange }: Props) {
     onChange(shapes);
   }, [shapes, onChange]);
 
+  const commitDraft = () => {
+    const next = draft.current;
+    draft.current = null;
+    if (!isAnnotateShape(next)) return;
+    setShapes((prev) => [...prev, next]);
+  };
+
   const point = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
@@ -93,19 +100,22 @@ export function AnnotateCanvas({ imageUrl, onChange }: Props) {
             draft.current.h = p.y - (draft.current.y ?? 0);
           }
         }}
-        onMouseUp={() => {
-          if (draft.current) setShapes((prev) => [...prev, draft.current!]);
-          draft.current = null;
-        }}
+        onMouseUp={commitDraft}
+        onMouseLeave={commitDraft}
       />
     </div>
   );
+}
+
+export function isAnnotateShape(value: unknown): value is AnnotateShape {
+  return Boolean(value && typeof value === 'object' && typeof (value as AnnotateShape).color === 'string' && (value as AnnotateShape).tool);
 }
 
 function redraw(ctx: CanvasRenderingContext2D, image: HTMLImageElement, shapes: AnnotateShape[]) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.drawImage(image, 0, 0);
   for (const shape of shapes) {
+    if (!isAnnotateShape(shape)) continue;
     ctx.strokeStyle = shape.color;
     ctx.fillStyle = shape.color;
     ctx.lineWidth = 3;

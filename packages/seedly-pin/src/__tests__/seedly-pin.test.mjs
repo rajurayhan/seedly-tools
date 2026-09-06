@@ -128,6 +128,9 @@ test('REST create/list/update/export live in owned routes', () => {
   const api = readOwned('convex/seedlyPin/api.ts');
   assert.match(api, /DISABLED_MESSAGE/);
   assert.match(api, /agency\.settings/);
+  assert.match(api, /requirePinLocation/);
+  assert.match(api, /activeSubAccountId/);
+  assert.equal(api.includes('requireSubAccount'), false);
   assert.equal(api.includes("key: 'seedly_pin'"), false);
 });
 
@@ -142,11 +145,20 @@ test('FAB stays hidden unless canDrop; overlay captures collectors', () => {
   assert.match(overlay, /pickElement/);
   assert.match(overlay, /pickPinPoint/);
   assert.match(overlay, /setPhase\('picking'\)/);
+  assert.match(overlay, /browserUploadUrl/);
   assert.equal(overlay.includes('captureDisplayFrame'), false);
   assert.equal(overlay.includes('recordDisplay'), false);
   const collectors = readOwned('apps/web/lib/seedly-pin/capture/collectors.ts');
   assert.match(collectors, /storageKeyNamesFromWindow/);
   assert.match(collectors, /Object\.keys\(win\.localStorage/);
+});
+
+test('annotate commits a snapshot so a cleared draft cannot paint null', () => {
+  const annotate = readOwned('apps/web/lib/seedly-pin/capture/annotate.tsx');
+  assert.match(annotate, /const next = draft\.current/);
+  assert.match(annotate, /isAnnotateShape\(next\)/);
+  assert.match(annotate, /if \(!isAnnotateShape\(shape\)\) continue/);
+  assert.equal(annotate.includes('[...prev, draft.current!]'), false);
 });
 
 test('viewport capture uses html-to-image and stamps the pin, never SVG foreignObject', () => {

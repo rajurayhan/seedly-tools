@@ -1,6 +1,6 @@
 import { ConvexError, v } from 'convex/values';
 import { internalMutation, internalQuery, mutation, query } from '../_generated/server';
-import { getAuthContext, requireSubAccount } from '../_helpers';
+import { getAuthContext } from '../_helpers';
 import {
   DISABLED_MESSAGE,
   DROP_FORBIDDEN_MESSAGE,
@@ -39,6 +39,12 @@ function assertDrop(settings: ReturnType<typeof normalizeSettings>, roleSlug: st
 function assertTriage(settings: ReturnType<typeof normalizeSettings>, roleSlug: string) {
   if (!settings.enabled) throw new ConvexError(DISABLED_MESSAGE);
   if (!canTriage(settings, roleSlug)) throw new ConvexError(TRIAGE_FORBIDDEN_MESSAGE);
+}
+
+function requirePinLocation(auth: { subAccountId?: string; activeSubAccountId?: string }) {
+  const locationId = auth.subAccountId ?? auth.activeSubAccountId;
+  if (!locationId) throw new ConvexError('Open a location before dropping a pin.');
+  return locationId;
 }
 
 async function writeHistory(
@@ -174,7 +180,7 @@ export const generateUploadUrl = mutation({
     const auth = await requireAuth(ctx);
     const settings = await agencySettings(ctx, auth.agencyId);
     assertDrop(settings, auth.roleSlug);
-    requireSubAccount(auth);
+    requirePinLocation(auth);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -205,7 +211,7 @@ export const createPin = mutation({
     const auth = await requireAuth(ctx);
     const settings = await agencySettings(ctx, auth.agencyId);
     assertDrop(settings, auth.roleSlug);
-    const subAccountId = requireSubAccount(auth);
+    const subAccountId = requirePinLocation(auth);
     const title = args.title.trim();
     if (title.length < 4) throw new ConvexError('Title must be at least 4 characters.');
     const priority = isValidPriority(args.priority) ? args.priority : 'medium';
@@ -261,7 +267,8 @@ export const listPins = query({
     const auth = await getAuthContext(ctx);
     const settings = await agencySettings(ctx, auth.agencyId);
     if (!canTriage(settings, auth.roleSlug)) return [];
-    const subAccountId = requireSubAccount(auth);
+    const subAccountId = auth.subAccountId ?? auth.activeSubAccountId;
+    if (!subAccountId) return [];
     let rows = await ctx.db
       .query('seedlyPins')
       .withIndex('by_subAccount', (q) => q.eq('subAccountId', subAccountId))
@@ -481,7 +488,8 @@ export const getStats = query({
     const auth = await getAuthContext(ctx);
     const settings = await agencySettings(ctx, auth.agencyId);
     if (!canTriage(settings, auth.roleSlug)) return { byStatus: {}, byPriority: {}, total: 0 };
-    const subAccountId = requireSubAccount(auth);
+    const subAccountId = auth.subAccountId ?? auth.activeSubAccountId;
+    if (!subAccountId) return { byStatus: {}, byPriority: {}, total: 0 };
     const rows = await ctx.db
       .query('seedlyPins')
       .withIndex('by_subAccount', (q) => q.eq('subAccountId', subAccountId))
