@@ -24,8 +24,10 @@ services:
     environment:
       INSTANCE_NAME: ${INSTANCE_NAME:-seedly-crm-dev}
       INSTANCE_SECRET: ${INSTANCE_SECRET:?Set INSTANCE_SECRET in .env.docker — run make docker-env}
-      CONVEX_CLOUD_ORIGIN: ${CONVEX_CLOUD_ORIGIN:-http://127.0.0.1:3310}
-      CONVEX_SITE_ORIGIN: ${CONVEX_SITE_ORIGIN:-http://127.0.0.1:3311}
+      # In-container listen ports. Actions call 127.0.0.1 here; do not use the
+      # published host ports (3310/3311) or Better Auth queries ECONNREFUSED.
+      CONVEX_CLOUD_ORIGIN: ${CONVEX_CLOUD_ORIGIN:-http://127.0.0.1:3210}
+      CONVEX_SITE_ORIGIN: ${CONVEX_SITE_ORIGIN:-http://127.0.0.1:3211}
       DISABLE_BEACON: ${DISABLE_BEACON:-true}
       RUST_LOG: ${RUST_LOG:-info}
       DOCUMENT_RETENTION_DELAY: ${DOCUMENT_RETENTION_DELAY:-172800}
