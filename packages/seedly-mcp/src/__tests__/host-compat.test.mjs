@@ -62,9 +62,14 @@ test('MCP setup lists use the shared DataTable, not a hand-rolled table', () => 
   assert.match(hub, /Copy local snippet/);
   assert.match(hub, /Copy live snippet/);
   assert.match(hub, /Copy MCP URL/);
-  assert.match(catalog, /DataTable/);
   assert.match(catalog, /CopyButton/);
+  assert.match(catalog, /Available tools/);
+  assert.ok(
+    hub.indexOf('<McpToolCatalog') < hub.indexOf('Connect an assistant'),
+    'Available tools must render above the connect section',
+  );
   assert.equal(hub.includes('<table'), false);
   assert.equal(catalog.includes('<table'), false);
+  assert.equal(catalog.includes('DataTable'), false);
   assert.equal(page.includes('p-6'), false);
 });
