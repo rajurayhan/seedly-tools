@@ -2,11 +2,11 @@
 
 ## What it is
 
-A free, login-gated zip that installs a local Docker Compose stack into a licensed Seedly 5.8 folder. Convex runs self-hosted. The buyer does not need Convex Cloud for this path.
+A free, login-gated zip that installs a local Docker Compose stack into a licensed Seedly 5.7 or 5.8 folder. Convex runs self-hosted. The buyer does not need Convex Cloud for this path.
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners who want the CRM on their computer (or a later Coolify VPS via [Seedly Coolify](seedly-coolify.md)).
+Licensed Seedly 5.7.x or 5.8.x owners who want the CRM on their computer (or a later Coolify VPS via [Seedly Coolify](seedly-coolify.md)).
 
 ## What they get
 
@@ -31,4 +31,4 @@ Zip only. Marketplace listing `seedly-docker`, `price_cents: 0`.
 
 ## Depends on
 
-Seedly 5.8.x and `extensionApiVersion: 1`. Docker Desktop for the local path.
+Seedly `>=5.7.0 <5.9.0` and `extensionApiVersion: 1`. Docker Desktop for the local path.

@@ -1,6 +1,6 @@
 # Seedly Docker (self-host pack)
 
-Install this into a licensed **Seedly 5.8.x** folder. It adds a local Docker Compose stack so you can run Next.js and a self-hosted Convex backend on your computer. You do not need Convex Cloud for this path.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. It adds a local Docker Compose stack so you can run Next.js and a self-hosted Convex backend on your computer. You do not need Convex Cloud for this path.
 
 This zip is not a CRM. It will not run on its own.
 

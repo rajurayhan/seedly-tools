@@ -13,7 +13,7 @@ Owner twin: [INSTALL.md](INSTALL.md). Shared agent rules: [../../docs/install-ag
 
 ## Install
 
-CWD = Seedly 5.8.x checkout:
+CWD = Seedly 5.7.x or 5.8.x checkout:
 
 ```
 node /ABS/seedly-docker-0.1.0/bin/install.mjs --seedly .

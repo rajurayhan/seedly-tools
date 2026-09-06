@@ -69,7 +69,7 @@ export function applyHostPatches(checkout, { dryRun = false, log = console } = {
   if (qr && !qr.includes('getServerConvexUrl')) {
     qr = ensureLine(qr, QR_IMPORT, QR_IMPORT, "import { ConvexHttpClient } from 'convex/browser';");
     qr = qr.replace(
-      /const url = process\.env\.NEXT_PUBLIC_CONVEX_URL \?\? '';/,
+      /const url = process\.env\.NEXT_PUBLIC_CONVEX_URL(?: \?\? '')?;/,
       'const url = getServerConvexUrl();',
     );
     if (!dryRun) write(join(checkout, qrRel), qr);
