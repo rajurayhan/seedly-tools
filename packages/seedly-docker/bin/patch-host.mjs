@@ -76,6 +76,56 @@ export function applyHostPatches(checkout, { dryRun = false, log = console } = {
     changed.push(qrRel);
   }
 
+  const cookieOptsRel = 'convex/authOptions.ts';
+  let cookieOpts = read(join(checkout, cookieOptsRel));
+  if (cookieOpts && !cookieOpts.includes("cookiePrefix: 'seedly-crm'")) {
+    cookieOpts = cookieOpts.replace(
+      `advanced: {
+    defaultCookieAttributes: {
+      sameSite: 'lax',
+      secure: true,
+      httpOnly: true,
+    },
+  },`,
+      `advanced: {
+    cookiePrefix: 'seedly-crm',
+    defaultCookieAttributes: {
+      sameSite: 'lax',
+      secure: !(process.env.SITE_URL ?? '').startsWith('http://'),
+      httpOnly: true,
+    },
+  },`,
+    );
+    if (!dryRun) write(join(checkout, cookieOptsRel), cookieOpts);
+    changed.push(cookieOptsRel);
+  }
+
+  const mwRel = 'apps/web/middleware.ts';
+  let mw = read(join(checkout, mwRel));
+  if (mw && mw.includes('getSessionCookie(request)') && !mw.includes("cookiePrefix: 'seedly-crm'")) {
+    mw = mw.replace(
+      'const session = getSessionCookie(request);',
+      "const session = getSessionCookie(request, { cookiePrefix: 'seedly-crm' });",
+    );
+    if (!dryRun) write(join(checkout, mwRel), mw);
+    changed.push(mwRel);
+  }
+
+  const originsRel = 'convex/auth.ts';
+  let origins = read(join(checkout, originsRel));
+  if (origins && !origins.includes('http://localhost:3100')) {
+    origins = origins.replace(
+      `'http://localhost:3001',
+        'http://127.0.0.1:3001',`,
+      `'http://localhost:3001',
+        'http://127.0.0.1:3001',
+        'http://localhost:3100',
+        'http://127.0.0.1:3100',`,
+    );
+    if (!dryRun) write(join(checkout, originsRel), origins);
+    changed.push(originsRel);
+  }
+
   const stockAppUrl = 'process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? process.env.SITE_URL';
   const patchedAppUrl =
     'process.env.INTERNAL_APP_URL /* seedly-docker */ ?? process.env.NEXT_PUBLIC_APP_URL ?? process.env.FRONTEND_URL ?? process.env.SITE_URL';
@@ -124,6 +174,56 @@ export function revertHostPatches(checkout, { dryRun = false, log = console } = 
     qr = qr.replace('const url = getServerConvexUrl();', "const url = process.env.NEXT_PUBLIC_CONVEX_URL ?? '';");
     if (!dryRun) write(join(checkout, qrRel), qr);
     changed.push(qrRel);
+  }
+
+  const cookieOptsRelRevert = 'convex/authOptions.ts';
+  let cookieOptsRevert = read(join(checkout, cookieOptsRelRevert));
+  if (cookieOptsRevert?.includes("cookiePrefix: 'seedly-crm'")) {
+    cookieOptsRevert = cookieOptsRevert.replace(
+      `advanced: {
+    cookiePrefix: 'seedly-crm',
+    defaultCookieAttributes: {
+      sameSite: 'lax',
+      secure: !(process.env.SITE_URL ?? '').startsWith('http://'),
+      httpOnly: true,
+    },
+  },`,
+      `advanced: {
+    defaultCookieAttributes: {
+      sameSite: 'lax',
+      secure: true,
+      httpOnly: true,
+    },
+  },`,
+    );
+    if (!dryRun) write(join(checkout, cookieOptsRelRevert), cookieOptsRevert);
+    changed.push(cookieOptsRelRevert);
+  }
+
+  const mwRelRevert = 'apps/web/middleware.ts';
+  let mwRevert = read(join(checkout, mwRelRevert));
+  if (mwRevert?.includes("cookiePrefix: 'seedly-crm'")) {
+    mwRevert = mwRevert.replace(
+      "const session = getSessionCookie(request, { cookiePrefix: 'seedly-crm' });",
+      'const session = getSessionCookie(request);',
+    );
+    if (!dryRun) write(join(checkout, mwRelRevert), mwRevert);
+    changed.push(mwRelRevert);
+  }
+
+  const originsRelRevert = 'convex/auth.ts';
+  let originsRevert = read(join(checkout, originsRelRevert));
+  if (originsRevert?.includes('http://localhost:3100')) {
+    originsRevert = originsRevert.replace(
+      `'http://localhost:3001',
+        'http://127.0.0.1:3001',
+        'http://localhost:3100',
+        'http://127.0.0.1:3100',`,
+      `'http://localhost:3001',
+        'http://127.0.0.1:3001',`,
+    );
+    if (!dryRun) write(join(checkout, originsRelRevert), originsRevert);
+    changed.push(originsRelRevert);
   }
 
   const marked =
