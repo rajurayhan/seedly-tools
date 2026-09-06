@@ -110,8 +110,10 @@ function redraw(ctx: CanvasRenderingContext2D, image: HTMLImageElement, shapes: 
     ctx.fillStyle = shape.color;
     ctx.lineWidth = 3;
     if (shape.tool === 'pen' && shape.points?.length) {
+      const start = shape.points[0];
+      if (!start) continue;
       ctx.beginPath();
-      ctx.moveTo(shape.points[0].x, shape.points[0].y);
+      ctx.moveTo(start.x, start.y);
       shape.points.forEach((p) => ctx.lineTo(p.x, p.y));
       ctx.stroke();
     } else if (shape.tool === 'rect' || shape.tool === 'pixelate') {

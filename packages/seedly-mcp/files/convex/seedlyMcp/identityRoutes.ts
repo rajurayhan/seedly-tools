@@ -44,7 +44,7 @@ export const seedlyMcpIdentityRoutes: readonly ExtensionApiRoute[] = [
     resource: 'me',
     rateLimit: 'read',
     summary: 'Current user (API key owner)',
-    handle: handleMe,
+    handle: (ctx, req) => handleMe(ctx as ActionCtx, req),
   },
   {
     namespace: 'seedly-mcp',
@@ -54,6 +54,6 @@ export const seedlyMcpIdentityRoutes: readonly ExtensionApiRoute[] = [
     resource: 'location',
     rateLimit: 'read',
     summary: 'Current authorized location',
-    handle: handleLocation,
+    handle: (ctx, req) => handleLocation(ctx as ActionCtx, req),
   },
 ];

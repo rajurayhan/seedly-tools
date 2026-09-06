@@ -410,7 +410,7 @@ test('seedly-pin merges seams, patches chrome, and uninstall restores them', asy
     const { applyHostPatches, revertHostPatches } = await import(
       join(seedlyPinKit, 'bin/patch-host.mjs')
     );
-    applyHostPatches(checkout, { log: silentLog() });
+    await applyHostPatches(checkout, { log: silentLog() });
 
     assert.match(read(checkout, 'convex/extensions/index.ts'), /seedlyPinTables/);
     assert.match(read(checkout, 'convex/extensions/snapshot.ts'), /seedlyPins/);
@@ -433,7 +433,7 @@ test('seedly-pin merges seams, patches chrome, and uninstall restores them', asy
     const doctor = runDoctor({ kitRoot: seedlyPinKit, checkout, log: silentLog() });
     assert.equal(doctor.ok, true, doctor.checks.filter((c) => !c.ok).map((c) => c.message).join('; '));
 
-    revertHostPatches(checkout, { log: silentLog() });
+    await revertHostPatches(checkout, { log: silentLog() });
     runUninstall({ kitRoot: seedlyPinKit, checkout, yes: true });
     assert.equal(existsSync(join(checkout, 'convex/seedlyPin/api.ts')), false);
     assert.equal(existsSync(join(checkout, 'convex/dispatch/jobs.ts')), true);
@@ -458,7 +458,7 @@ test('seedly-pin reports a seam gap when dashboard layout markers are missing', 
     });
     writeFileSync(join(checkout, 'apps/web/app/(dashboard)/layout.tsx'), 'export default function L() { return null; }\n');
     const { applyHostPatches } = await import(join(seedlyPinKit, 'bin/patch-host.mjs'));
-    assert.throws(
+    await assert.rejects(
       () => applyHostPatches(checkout, { log: silentLog() }),
       /seam gap/,
     );

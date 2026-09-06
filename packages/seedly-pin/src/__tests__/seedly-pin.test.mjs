@@ -18,8 +18,15 @@ import {
   storageKeyNamesOnly,
 } from '../../files/packages/seedly-pin/src/gates.mjs';
 import { insertPinOpenApi, PIN_PATH_MARK } from '../../bin/openapi.mjs';
-import { insertPinAllowMap, stripPinAllowMap } from '../../bin/allow-map.mjs';
+import {
+  insertPinAllowMap,
+  insertPinFallbackTools,
+  insertPinToolGroup,
+  stripPinAllowMap,
+  stripPinMarkedBlock,
+} from '../../bin/allow-map.mjs';
 import { patchLayout, patchSettingsLayout } from '../../bin/patch-host.mjs';
+import { applySeams } from '../../../toolkit/src/seams.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const kitRoot = resolve(here, '../..');
@@ -188,6 +195,75 @@ test('allow-map insert is no-op when missing and idempotent when present', () =>
   assert.match(first.src, /export_pin_diagnostics/);
   const stripped = stripPinAllowMap(first.src);
   assert.equal(stripped.includes('list_pins'), false);
+});
+
+test('allow-map insert lands in ALLOW_MAP, not BLOCKED_V1_TOOLS', () => {
+  const src = `export const ALLOW_MAP = [
+  { operationId: 'getMe', name: 'get_me' },
+];
+
+export const BLOCKED_V1_TOOLS = [
+  'send_invoice',
+];
+`;
+  const { src: next, inserted } = insertPinAllowMap(src);
+  assert.equal(inserted, true);
+  const allow = next.slice(next.indexOf('ALLOW_MAP'), next.indexOf('BLOCKED_V1_TOOLS'));
+  const blocked = next.slice(next.indexOf('BLOCKED_V1_TOOLS'));
+  assert.match(allow, /listPins/);
+  assert.equal(blocked.includes('listPins'), false);
+});
+
+test('subject seam merges a host that already has SeedlyMCP', () => {
+  const seams = JSON.parse(readFileSync(join(kitRoot, 'seams.json'), 'utf8'));
+  const merge = seams.merges.find((m) => m.file === 'apps/web/lib/extension-subjects.ts');
+  assert.equal(merge.ifMissing, '_seedlyPin.extensionSubjects');
+  const src = `import * as _seedlyMcp from './seedly-mcp/subjects';
+export const extensionSubjects = [..._seedlyMcp.extensionSubjects] as const;
+`;
+  const next = applySeams(src, merge);
+  assert.match(next, /seedly-pin\/subjects/);
+  assert.match(next, /\.\.\._seedlyMcp\.extensionSubjects, \.\.\._seedlyPin\.extensionSubjects/);
+  assert.equal(applySeams(next, merge), next);
+});
+
+test('subject seam repairs a half-applied import-only merge', () => {
+  const seams = JSON.parse(readFileSync(join(kitRoot, 'seams.json'), 'utf8'));
+  const merge = seams.merges.find((m) => m.file === 'apps/web/lib/extension-subjects.ts');
+  const src = `import * as _seedlyPin from './seedly-pin/subjects';
+import * as _seedlyMcp from './seedly-mcp/subjects';
+export const extensionSubjects = [..._seedlyMcp.extensionSubjects] as const;
+`;
+  const next = applySeams(src, merge);
+  assert.match(next, /\.\.\._seedlyPin\.extensionSubjects/);
+});
+
+test('MCP fallback and tool-group inserts are marked and revertible', () => {
+  const fallback = `export const FALLBACK_TOOLS = [
+  { name: 'list_sub_accounts', method: 'GET', path: '/api/v1/sub-accounts' },
+];
+`;
+  const groups = `export const TOOL_GROUPS = [
+  { title: 'Locations', names: ['list_sub_accounts'] },
+];
+`;
+  const f1 = insertPinFallbackTools(fallback);
+  const g1 = insertPinToolGroup(groups);
+  assert.equal(f1.inserted && g1.inserted, true);
+  assert.match(f1.src, /name: 'list_pins'/);
+  assert.match(g1.src, /title: 'Pins'/);
+  assert.equal(insertPinFallbackTools(f1.src).inserted, false);
+  assert.equal(stripPinMarkedBlock(f1.src).includes('list_pins'), false);
+  assert.equal(stripPinMarkedBlock(g1.src).includes('Pins'), false);
+});
+
+test('installer patches the host before it typechecks', () => {
+  const install = readFileSync(join(kitRoot, 'bin/install.mjs'), 'utf8');
+  assert.match(install, /runTypecheck: false/);
+  assert.match(install, /applyHostPatches/);
+  const patchesAt = install.indexOf('applyHostPatches');
+  const typecheckAt = install.indexOf("spawnSync('npx'");
+  assert.ok(patchesAt > 0 && typecheckAt > patchesAt);
 });
 
 test('disabled message is the REST 403 copy', () => {

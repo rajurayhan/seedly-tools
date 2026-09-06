@@ -49,7 +49,7 @@ Publish the website the way you already do. This add-on also changes the backend
 
 There is no switch under Admin → Plans. This is agency-wide.
 
-If Cursor or Claude should read pins, install **SeedlyMCP** as well, then run that zip’s `bin/sync-tools.mjs`.
+If Cursor or Claude should read pins, install **SeedlyMCP** as well. Either order works: this installer notices SeedlyMCP and adds pin tools; a later SeedlyMCP install notices SeedlyPin and puts those tools back.
 
 ## Check / remove
 

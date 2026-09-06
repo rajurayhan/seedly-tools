@@ -25,6 +25,7 @@
     "convex/seedlyPinSchema.ts",
     "packages/seedly-pin/package.json",
     "packages/seedly-pin/src/gates.mjs",
+    "packages/seedly-pin/src/mcp-bridge.mjs",
     "packages/seedly-pin/src/permissions.ts"
   ]
 }

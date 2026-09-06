@@ -28,3 +28,17 @@ test('subject seam merges the empty 5.7 leaf and repairs a half-applied install'
   assert.match(seams, /export const extensionSubjects = \[\] as const;/);
   assert.match(seams, /\[\.\.\._seedlyMcp\.extensionSubjects\] as const/);
 });
+
+test('MCP seams merge a host that already has SeedlyPin', () => {
+  assert.match(seams, /\.\.\.seedlyPinTables/);
+  assert.match(seams, /_seedlyPin\.extensionSubjects/);
+  assert.match(seams, /_seedlyPin\.extensionPermissionModules/);
+  assert.match(seams, /\.\.\.seedlyPinRoutes/);
+});
+
+test('MCP installer re-adopts SeedlyPin tools when the bridge is on the host', () => {
+  const install = readFileSync(join(kit, 'bin/install.mjs'), 'utf8');
+  assert.match(install, /packages\/seedly-pin\/src\/mcp-bridge\.mjs/);
+  assert.match(install, /applyPinMcpBridge/);
+  assert.match(install, /adoptInstalledPin/);
+});

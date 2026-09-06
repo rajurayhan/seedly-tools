@@ -11,7 +11,7 @@ const { arg } = await import(pathToFileURL(join(dirname(fileURLToPath(cliHref)),
 
 try {
   const checkout = arg(process.argv, '--seedly', process.cwd());
-  revertHostPatches(checkout, { dryRun: process.argv.includes('--dry-run') });
+  await revertHostPatches(checkout, { dryRun: process.argv.includes('--dry-run') });
   uninstallFromArgv(kitRoot, process.argv);
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);

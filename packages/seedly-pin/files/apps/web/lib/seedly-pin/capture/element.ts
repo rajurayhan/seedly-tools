@@ -6,7 +6,7 @@ export function cssSelectorFor(el: Element): string {
   let node: Element | null = el;
   while (node && node.nodeType === 1 && parts.length < 6) {
     const tag = node.tagName.toLowerCase();
-    const parent = node.parentElement;
+    const parent: Element | null = node.parentElement;
     if (!parent) {
       parts.unshift(tag);
       break;

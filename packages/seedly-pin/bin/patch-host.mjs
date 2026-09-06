@@ -4,7 +4,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { applyPinAllowMap, revertPinAllowMap } from './allow-map.mjs';
+import { applyPinMcpBridge, revertPinMcpBridge } from './allow-map.mjs';
 import { ensurePinOpenApi, revertPinOpenApi } from './openapi.mjs';
 
 const MARK = 'seedly-pin';
@@ -64,7 +64,7 @@ export function patchSettingsLayout(src) {
   return { src: next, ok: next.includes('/settings/pins') };
 }
 
-export function applyHostPatches(checkout, { dryRun = false, log = console, requireCore = true } = {}) {
+export async function applyHostPatches(checkout, { dryRun = false, log = console, requireCore = true } = {}) {
   const changed = [];
   const gaps = [];
 
@@ -97,8 +97,8 @@ export function applyHostPatches(checkout, { dryRun = false, log = console, requ
   const openapi = ensurePinOpenApi({ checkout, dryRun, log });
   if (openapi.inserted) changed.push('docs/openapi.yaml');
 
-  const allow = applyPinAllowMap({ checkout, dryRun, log });
-  if (allow.inserted) changed.push('packages/seedly-mcp/lib/allow-map.mjs');
+  const mcp = await applyPinMcpBridge({ checkout, dryRun, log });
+  if (mcp.changed?.length) changed.push(...mcp.changed);
 
   if (gaps.length && requireCore) {
     throw new Error(`seedly-pin seam gap: ${gaps.join('; ')}`);
@@ -108,7 +108,7 @@ export function applyHostPatches(checkout, { dryRun = false, log = console, requ
   return { changed, gaps };
 }
 
-export function revertHostPatches(checkout, { dryRun = false, log = console } = {}) {
+export async function revertHostPatches(checkout, { dryRun = false, log = console } = {}) {
   const changed = [];
 
   function revertFile(rel, transforms) {
@@ -133,9 +133,8 @@ export function revertHostPatches(checkout, { dryRun = false, log = console } = 
   ]);
 
   if (revertPinOpenApi({ checkout, dryRun, log }).changed) changed.push('docs/openapi.yaml');
-  if (revertPinAllowMap({ checkout, dryRun, log }).changed) {
-    changed.push('packages/seedly-mcp/lib/allow-map.mjs');
-  }
+  const mcpRevert = await revertPinMcpBridge({ checkout, dryRun, log });
+  if (mcpRevert.changed?.length) changed.push(...mcpRevert.changed);
 
   if (changed.length) log.log(dryRun ? 'would revert' : 'reverted', changed.join(', '));
   return changed;

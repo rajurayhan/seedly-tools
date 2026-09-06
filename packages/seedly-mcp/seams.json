@@ -11,7 +11,7 @@
         },
         {
           "kind": "insertAfterFirstMatch",
-          "candidates": ["...ghlImportTables,", "...goseedlyTables,", "..._m0.extensionTables,"],
+          "candidates": ["...seedlyPinTables,", "...ghlImportTables,", "...goseedlyTables,", "..._m0.extensionTables,"],
           "insert": "\n  ...seedlyMcpTables,",
           "fallback": {
             "after": "export const extensionTables = {",
@@ -50,7 +50,7 @@
           "kind": "ensureImport",
           "code": "import * as _seedlyMcp from './seedly-mcp/nav';",
           "marker": "seedly-mcp/nav",
-          "preferAfter": "import * as _ghlImport from './ghl-import/nav';"
+          "preferAfter": "import * as _seedlyPin from './seedly-pin/nav';"
         },
         {
           "kind": "insertAfter",
@@ -136,6 +136,12 @@
           "needle": "_seedlyMcp.extensionSubjects",
           "from": "..._m1.extensionSubjects] as const;",
           "to": "..._m1.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyMcp.extensionSubjects",
+          "from": "..._seedlyPin.extensionSubjects] as const;",
+          "to": "..._seedlyPin.extensionSubjects, ..._seedlyMcp.extensionSubjects] as const;"
         }
       ]
     },
@@ -150,7 +156,7 @@
         },
         {
           "kind": "insertAfterFirstMatch",
-          "candidates": ["..._ghlImport.extensionPermissionModules,", "..._m0.extensionPermissionModules,"],
+          "candidates": ["..._seedlyPin.extensionPermissionModules,", "..._ghlImport.extensionPermissionModules,", "..._m0.extensionPermissionModules,"],
           "insert": "\n  ..._seedlyMcp.extensionPermissionModules,",
           "fallback": {
             "after": "export const extensionPermissionModules: PermissionModuleDef[] = [",
@@ -181,6 +187,12 @@
           "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...seedlyMcpIdentityRoutes,\n];"
         },
         {
+          "kind": "replaceIfMissing",
+          "needle": "...seedlyMcpIdentityRoutes",
+          "from": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...seedlyPinRoutes,\n];",
+          "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...seedlyPinRoutes,\n  ...seedlyMcpIdentityRoutes,\n];"
+        },
+        {
           "kind": "insertAfter",
           "after": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [",
           "insert": "\n  ...seedlyMcpIdentityRoutes,",
@@ -199,7 +211,7 @@
         },
         {
           "kind": "insertAfterFirstMatch",
-          "candidates": ["..._ghlImport.extensionModuleSubjects,", "..._m0.extensionModuleSubjects,"],
+          "candidates": ["..._seedlyPin.extensionModuleSubjects,", "..._ghlImport.extensionModuleSubjects,", "..._m0.extensionModuleSubjects,"],
           "insert": "\n  ..._seedlyMcp.extensionModuleSubjects,",
           "fallback": {
             "after": "export const extensionModuleSubjects: Record<string, string> = {",

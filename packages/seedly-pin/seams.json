@@ -50,7 +50,7 @@
           "kind": "ensureImport",
           "code": "import * as _seedlyPin from './seedly-pin/nav';",
           "marker": "seedly-pin/nav",
-          "preferAfter": "import * as _m0 from './dispatch/nav';"
+          "preferAfter": "import * as _seedlyMcp from './seedly-mcp/nav';"
         },
         {
           "kind": "insertAfter",
@@ -76,12 +76,18 @@
     },
     {
       "file": "apps/web/lib/extension-subjects.ts",
-      "ifMissing": "seedly-pin/subjects",
+      "ifMissing": "_seedlyPin.extensionSubjects",
       "ops": [
         {
           "kind": "ensureImport",
           "code": "import * as _seedlyPin from './seedly-pin/subjects';",
           "marker": "seedly-pin/subjects"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyPin.extensionSubjects",
+          "from": "export const extensionSubjects = [] as const;",
+          "to": "export const extensionSubjects = [..._seedlyPin.extensionSubjects] as const;"
         },
         {
           "kind": "replace",
@@ -93,6 +99,24 @@
           "needle": "_seedlyPin.extensionSubjects",
           "from": "..._m0.extensionSubjects]",
           "to": "..._m0.extensionSubjects, ..._seedlyPin.extensionSubjects]"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyPin.extensionSubjects",
+          "from": "..._seedlyMcp.extensionSubjects] as const;",
+          "to": "..._seedlyMcp.extensionSubjects, ..._seedlyPin.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyPin.extensionSubjects",
+          "from": "..._ghlImport.extensionSubjects] as const;",
+          "to": "..._ghlImport.extensionSubjects, ..._seedlyPin.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyPin.extensionSubjects",
+          "from": "..._loginAs.extensionSubjects] as const;",
+          "to": "..._loginAs.extensionSubjects, ..._seedlyPin.extensionSubjects] as const;"
         }
       ]
     },

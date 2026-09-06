@@ -51,7 +51,7 @@ runInstall({ kitRoot: process.cwd(), checkout: '/ABS/seedly', skipTypecheck: tru
 
 (from `packages/seedly-mcp`, adjust paths). Packed zips resolve toolkit via `bin/resolve-toolkit.mjs` (`./toolkit` or `../../toolkit`).
 
-Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`, then — if the host yaml has no `operationId: getMe` — inserts **real** fallback doors `/api/v1/ext/seedly-mcp/me` and `/location` into that yaml, then refreshes `packages/seedly-mcp/lib/tools.mjs`. It never invents `/api/v1/me` in `convex/http.ts`. It never deploys.
+Installer: copies `ownedFiles`, merges `seams.json`, writes `.modules.json`, then — if the host yaml has no `operationId: getMe` — inserts **real** fallback doors `/api/v1/ext/seedly-mcp/me` and `/location` into that yaml, then refreshes `packages/seedly-mcp/lib/tools.mjs`. If SeedlyPin is already on the host (`packages/seedly-pin/src/mcp-bridge.mjs`), this zip re-merges pin tools into the allow-map / fallback / tool groups before that refresh. It never invents `/api/v1/me` in `convex/http.ts`. It never deploys.
 
 If you call toolkit `runInstall` directly (dev path above), also run:
 

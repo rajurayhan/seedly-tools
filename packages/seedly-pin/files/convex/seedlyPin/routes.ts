@@ -146,6 +146,10 @@ async function handleAssignable(ctx: ActionCtx, req: ExtensionApiRequest): Promi
   return ctx.runQuery(assignableRef, { agencyId: req.agencyId });
 }
 
+function bind(fn: (ctx: ActionCtx, req: ExtensionApiRequest) => Promise<ExtensionApiResult>) {
+  return (ctx: unknown, req: ExtensionApiRequest) => fn(ctx as ActionCtx, req);
+}
+
 export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
   {
     namespace: 'seedly-pin',
@@ -155,7 +159,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'List pins',
-    handle: handleList,
+    handle: bind(handleList),
   },
   {
     namespace: 'seedly-pin',
@@ -165,7 +169,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'write',
     summary: 'Create a manual pin',
-    handle: handleCreate,
+    handle: bind(handleCreate),
   },
   {
     namespace: 'seedly-pin',
@@ -175,7 +179,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'Get one pin',
-    handle: handleGet,
+    handle: bind(handleGet),
   },
   {
     namespace: 'seedly-pin',
@@ -185,7 +189,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'write',
     summary: 'Update a pin',
-    handle: handleUpdate,
+    handle: bind(handleUpdate),
   },
   {
     namespace: 'seedly-pin',
@@ -195,7 +199,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'List pin files',
-    handle: handleFiles,
+    handle: bind(handleFiles),
   },
   {
     namespace: 'seedly-pin',
@@ -205,7 +209,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'List pin notes',
-    handle: handleNotes,
+    handle: bind(handleNotes),
   },
   {
     namespace: 'seedly-pin',
@@ -215,7 +219,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'write',
     summary: 'Add a pin note',
-    handle: handleAddNote,
+    handle: bind(handleAddNote),
   },
   {
     namespace: 'seedly-pin',
@@ -225,7 +229,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'Pin history',
-    handle: handleHistory,
+    handle: bind(handleHistory),
   },
   {
     namespace: 'seedly-pin',
@@ -235,7 +239,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'Export pin diagnostics',
-    handle: handleExport,
+    handle: bind(handleExport),
   },
   {
     namespace: 'seedly-pin',
@@ -245,7 +249,7 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'Pin stats',
-    handle: handleStats,
+    handle: bind(handleStats),
   },
   {
     namespace: 'seedly-pin',
@@ -255,6 +259,6 @@ export const seedlyPinRoutes: readonly ExtensionApiRoute[] = [
     resource: 'pins',
     rateLimit: 'read',
     summary: 'Assignable users',
-    handle: handleAssignable,
+    handle: bind(handleAssignable),
   },
 ];

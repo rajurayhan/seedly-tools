@@ -59,7 +59,10 @@ export function classifyClickTarget(el: Element | null): UserActivity {
 
 export function storageKeyNamesFromWindow(win: Window = window) {
   const cookies = win.document.cookie
-    ? win.document.cookie.split(';').map((part) => part.split('=')[0]?.trim()).filter(Boolean)
+    ? win.document.cookie
+        .split(';')
+        .map((part) => part.split('=')[0]?.trim())
+        .filter((name): name is string => Boolean(name))
     : [];
   const localStorage = Object.keys(win.localStorage ?? {});
   const sessionStorage = Object.keys(win.sessionStorage ?? {});
@@ -129,7 +132,12 @@ export function createCaptureSession() {
       method: String(method).toUpperCase(),
       url: String(url),
     };
-    return originals.open.call(this, method, url, ...(rest as []));
+    return (originals.open as (this: XMLHttpRequest, ...args: unknown[]) => void).call(
+      this,
+      method,
+      url,
+      ...rest,
+    );
   };
   XMLHttpRequest.prototype.send = function (...args: unknown[]) {
     this.addEventListener('loadend', () => {

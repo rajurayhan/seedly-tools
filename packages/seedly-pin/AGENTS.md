@@ -19,7 +19,9 @@ CWD = Seedly 5.7.x or 5.8.x checkout:
 node /ABS/seedly-pin-0.1.0/bin/install.mjs --seedly .
 ```
 
-That copies owned files, merges seams, then `bin/patch-host.mjs` inserts the FAB, the Settings → Pins tab, OpenAPI paths, and SeedlyMCP allow-map entries when that file exists. Missing layout / settings insert points is a **seam gap** — stop.
+That copies owned files, merges seams, then `bin/patch-host.mjs` inserts the FAB, the Settings → Pins tab, and OpenAPI paths. **Then** it typechecks. Missing layout / settings insert points is a **seam gap** — stop.
+
+If SeedlyMCP is already on the host (`packages/seedly-mcp/lib/allow-map.mjs`), the same install detects it and merges pin tools into `ALLOW_MAP` (never `BLOCKED_V1_TOOLS`), `fallback-tools.mjs`, and `tool-groups.mjs`, then refreshes `tools.mjs`. The merge lives in owned `packages/seedly-pin/src/mcp-bridge.mjs` so a later SeedlyMCP reinstall can re-adopt pin tools without this zip.
 
 Then from the host:
 
@@ -30,7 +32,7 @@ npx pnpm --filter @seedly-crm/web typecheck
 
 Agency owner enables the add-on at **Settings → Pins**. Not Admin → Plans.
 
-If SeedlyMCP is installed, this zip appends pin `operationId`s to `packages/seedly-mcp/lib/allow-map.mjs`. Then run that zip’s `bin/sync-tools.mjs --seedly .` so Cursor / Claude get pin tools. Re-run SeedlyPin install after a later SeedlyMCP reinstall so the allow-map lines come back.
+If you install SeedlyMCP **after** SeedlyPin, that zip’s installer looks for `mcp-bridge.mjs` on the host and re-merges pin tools itself. You do not need to re-run this zip unless the host has an older SeedlyPin without the bridge file.
 
 ## Verify
 

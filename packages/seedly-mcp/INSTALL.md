@@ -53,6 +53,8 @@ npx pnpm --filter @seedly-crm/web typecheck
 
 If that prints errors, stop and send them to whoever helps you. Do not publish.
 
+If **SeedlyPin** is already installed, this installer puts pin tools back on the assistant list. Either add-on can go first.
+
 ## 3. Publish
 
 Do this the same way you published Seedly the first time.
