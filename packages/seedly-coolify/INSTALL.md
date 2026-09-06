@@ -1,6 +1,6 @@
 # Seedly Coolify — install guide (for owners)
 
-This guide is for a licensed **Seedly 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
+This guide is for a licensed **Seedly 5.7 or 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
 
 This zip lets you run your Seedly on a VPS with Coolify. Convex (the database) runs on the same box. You do not log in to Convex Cloud. This zip is not a CRM.
 
@@ -8,7 +8,7 @@ You need a VPS and a Coolify install. The zip also includes local Docker files i
 
 ## Before you start
 
-- Seedly 5.8 is already on your computer. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
+- Seedly 5.7 or 5.8 is already on your computer. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
 - This add-on is unzipped (`seedly-coolify-0.1.0` with a `bin` folder inside).
 - You can open Terminal (Mac) or PowerShell (Windows).
 

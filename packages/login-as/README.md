@@ -1,6 +1,6 @@
 # Login as location user (Seedly add-on)
 
-Install this into a licensed **Seedly 5.8.x** folder. Agency owners can open a location as that location’s user without sharing a password.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. Agency owners can open a location as that location’s user without sharing a password.
 
 This zip is not a CRM. It will not run on its own.
 

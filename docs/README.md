@@ -2,7 +2,7 @@
 
 This folder is the product list for **seedly-tools**. It is for us (what we are building) and for a future buyer (what they get).
 
-The buyer is a licensed **Seedly 5.8.x** owner. This repo is not a CRM. Zips install into their Seedly folder.
+The buyer is a licensed **Seedly 5.7.x or 5.8.x** owner. This repo is not a CRM. Zips install into their Seedly folder.
 
 Do not add SKUs here that are not on this list.
 

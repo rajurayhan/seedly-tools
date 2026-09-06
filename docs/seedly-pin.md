@@ -6,7 +6,7 @@ An installable zip. Staff drop a Pin on the page they are looking at. The ticket
 
 ## Who it is for
 
-Licensed Seedly 5.8.x agencies that want in-CRM bug and work tickets. The seam host is Seedly 5.8.0. This zip does not change the Seedly git repo — the installer adds files to the buyer folder.
+Licensed Seedly 5.7.x or 5.8.x agencies that want in-CRM bug and work tickets. The seam host is Seedly 5.7 / 5.8. This zip does not change the Seedly git repo — the installer adds files to the buyer folder.
 
 ## What they get
 
@@ -37,6 +37,6 @@ Zip. Installer copies owned files, merges factory seams, and inserts marked line
 
 ## Depends on
 
-- Seedly 5.8.x (dashboard `InitialDataProvider` + agency Settings layout + `extensionApiVersion: 1`)
+- Seedly 5.7.x or 5.8.x (dashboard `InitialDataProvider` + agency Settings layout + `extensionApiVersion: 1`)
 - [Factory](factory.md)
 - Optional: [SeedlyMCP](seedly-mcp.md) for editor-agent tools

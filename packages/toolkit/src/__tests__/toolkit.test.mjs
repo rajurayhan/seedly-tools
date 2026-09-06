@@ -40,11 +40,14 @@ function read(checkout, rel) {
   return readFileSync(join(checkout, rel), 'utf8');
 }
 
-test('version range accepts 5.8.x only', () => {
-  assert.equal(satisfiesRange('5.8.0', '>=5.8.0 <5.9.0'), true);
-  assert.equal(satisfiesRange('5.8.12', '>=5.8.0 <5.9.0'), true);
-  assert.equal(satisfiesRange('5.7.9', '>=5.8.0 <5.9.0'), false);
-  assert.equal(satisfiesRange('5.9.0', '>=5.8.0 <5.9.0'), false);
+test('version range accepts 5.7.x and 5.8.x', () => {
+  const range = '>=5.7.0 <5.9.0';
+  assert.equal(satisfiesRange('5.7.0', range), true);
+  assert.equal(satisfiesRange('5.7.9', range), true);
+  assert.equal(satisfiesRange('5.8.0', range), true);
+  assert.equal(satisfiesRange('5.8.12', range), true);
+  assert.equal(satisfiesRange('5.6.9', range), false);
+  assert.equal(satisfiesRange('5.9.0', range), false);
 });
 
 test('ownedFiles may not claim shared seams', () => {
@@ -179,6 +182,47 @@ test('ghl-import merges next to Dispatch and doctor passes', () => {
     const after = read(checkout, 'convex/extensions/index.ts');
     assert.match(after, /_m0\.extensionTables/);
     assert.equal(after.includes('ghlImportTables'), false);
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-mcp merges the empty 5.7 extension-subjects leaf and repairs a half-applied install', () => {
+  const checkout = cloneHost();
+  try {
+    writeFileSync(
+      join(checkout, 'apps/web/lib/extension-subjects.ts'),
+      `import * as _seedlyMcp from './seedly-mcp/subjects';
+export const extensionSubjects = [] as const;
+export type ExtensionSubject = (typeof extensionSubjects)[number];
+`,
+    );
+    runInstall({
+      kitRoot: seedlyMcpKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const repaired = read(checkout, 'apps/web/lib/extension-subjects.ts');
+    assert.match(repaired, /from '\.\/seedly-mcp\/subjects'/);
+    assert.match(repaired, /\[\.\.\._seedlyMcp\.extensionSubjects\] as const/);
+    assert.equal(repaired.includes('export const extensionSubjects = [] as const;'), false);
+
+    writeFileSync(
+      join(checkout, 'apps/web/lib/extension-subjects.ts'),
+      `export const extensionSubjects = [] as const;
+export type ExtensionSubject = (typeof extensionSubjects)[number];
+`,
+    );
+    runInstall({
+      kitRoot: seedlyMcpKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const fresh = read(checkout, 'apps/web/lib/extension-subjects.ts');
+    assert.match(fresh, /from '\.\/seedly-mcp\/subjects'/);
+    assert.match(fresh, /\[\.\.\._seedlyMcp\.extensionSubjects\] as const/);
   } finally {
     rmSync(checkout, { recursive: true, force: true });
   }

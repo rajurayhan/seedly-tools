@@ -1,6 +1,6 @@
 # SeedlyMCP — agent install playbook
 
-Install this zip into a licensed **Seedly 5.8.x** checkout. Owner twin: [INSTALL.md](INSTALL.md). Factory: [../../docs/factory.md](../../docs/factory.md). Shared agent rules: [../../docs/install-agents.md](../../docs/install-agents.md).
+Install this zip into a licensed **Seedly 5.7.x or 5.8.x** checkout. Owner twin: [INSTALL.md](INSTALL.md). Factory: [../../docs/factory.md](../../docs/factory.md). Shared agent rules: [../../docs/install-agents.md](../../docs/install-agents.md).
 
 This zip is not a CRM. Do not start Phases 2–5 product work from here.
 
@@ -30,7 +30,7 @@ Plan feature: `seedly_mcp` / label **SeedlyMCP** / group **Add-ons**.
 test -d apps && test -d convex && test -f package.json
 ```
 
-`package.json` `version` must satisfy `>=5.8.0 <5.9.0`. `extensionApiVersion` must be `1`.
+`package.json` `version` must satisfy `>=5.7.0 <5.9.0`. `extensionApiVersion` must be `1`.
 
 ## Install
 

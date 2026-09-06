@@ -2,7 +2,7 @@
   "name": "seedly-coolify",
   "version": "0.1.0",
   "extensionApiVersion": 1,
-  "seedlyRange": ">=5.8.0 <5.9.0",
+  "seedlyRange": ">=5.7.0 <5.9.0",
   "ownedFiles": [
     "compose.yaml",
     "compose.prod.yaml",

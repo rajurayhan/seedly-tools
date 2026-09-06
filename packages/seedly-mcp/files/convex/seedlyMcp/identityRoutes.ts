@@ -4,7 +4,7 @@ import type {
   ExtensionApiRequest,
   ExtensionApiResult,
   ExtensionApiRoute,
-} from '../extensions/apiRoutes';
+} from './apiRouteTypes';
 
 const getMeRef = makeFunctionReference<'query'>('seedlyMcp/identity:getMe');
 const getLocationRef = makeFunctionReference<'query'>('seedlyMcp/identity:getLocation');

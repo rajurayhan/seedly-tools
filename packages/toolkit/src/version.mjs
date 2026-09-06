@@ -12,7 +12,7 @@ function cmp(a, b) {
 }
 
 /**
- * Satisfies a space-separated range like ">=5.8.0 <5.9.0".
+ * Satisfies a space-separated range like ">=5.7.0 <5.9.0".
  */
 export function satisfiesRange(version, range) {
   const ver = parseVer(version);

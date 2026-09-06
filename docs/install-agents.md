@@ -1,6 +1,6 @@
 # Install a Seedly add-on (for AI agents)
 
-Audience: an agent installing a **buyer zip** into a licensed Seedly 5.8.x checkout. This is not a CRM repo. Do not treat `seedly-tools` as the host.
+Audience: an agent installing a **buyer zip** into a licensed Seedly 5.7.x or 5.8.x checkout. This is not a CRM repo. Do not treat `seedly-tools` as the host.
 
 Owner-facing twin: [install-owners.md](install-owners.md). Factory rules: [factory.md](factory.md).
 
@@ -25,7 +25,7 @@ SKU playbooks (prefer these when the zip is named):
 
 ## Detect the host
 
-The Seedly folder must have `apps/`, `convex/`, and `package.json` with `version` in `>=5.8.0 <5.9.0` and `extensionApiVersion: 1`.
+The Seedly folder must have `apps/`, `convex/`, and `package.json` with `version` in `>=5.7.0 <5.9.0` and `extensionApiVersion: 1`.
 
 ```
 node bin/install.mjs --seedly /absolute/path/to/seedly

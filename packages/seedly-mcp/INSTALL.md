@@ -1,6 +1,6 @@
 # SeedlyMCP — install guide (for owners)
 
-This guide is for a licensed **Seedly 5.8** owner. You do not need to be a programmer. If Cursor or Claude is doing the install for you, give them [AGENTS.md](AGENTS.md) instead.
+This guide is for a licensed **Seedly 5.7 or 5.8** owner. You do not need to be a programmer. If Cursor or Claude is doing the install for you, give them [AGENTS.md](AGENTS.md) instead.
 
 SeedlyMCP lets an assistant on **your** computer (or Claude on the web) read and update **your** Seedly. Your contact book never goes to Sulus. This zip is not a CRM and will not run by itself.
 
@@ -15,7 +15,7 @@ The assistant can look up contacts, conversations, calendars, tasks, deals, invo
 
 ## Before you start
 
-1. Seedly 5.8 is already running. You know the folder on your computer that has `apps`, `convex`, and `package.json`. That is the **Seedly folder**.
+1. Seedly 5.7 or 5.8 is already running. You know the folder on your computer that has `apps`, `convex`, and `package.json`. That is the **Seedly folder**.
 2. You have this add-on unzipped. Inside it you should see `bin`, `README.md`, and `INSTALL.md` (this file).
 3. You can open Terminal (Mac) or PowerShell (Windows).
 
@@ -33,7 +33,7 @@ On a Mac: type `node `, drag the unzipped `seedly-mcp-0.1.0` folder onto the win
 
 If you see `Not a Seedly checkout` you are in the wrong folder. Go to the folder that has both `apps` and `convex`.
 
-If you see `Refusing` or a version error, this zip is only for Seedly 5.8. Do not continue on 5.7 or 5.9.
+If you see `Refusing` or a version error, this zip is only for Seedly 5.7 or 5.8. Do not continue on 5.6 or 5.9.
 
 ## 2. Refresh packages
 

@@ -6,7 +6,7 @@ An installable zip. An agency owner opens a location as that location’s user w
 
 ## Who it is for
 
-Licensed Seedly 5.8.x agencies. The seam host is Seedly 5.8.0. This zip does not change the Seedly git repo — the installer adds files to the buyer folder.
+Licensed Seedly 5.7.x or 5.8.x agencies. The seam host is Seedly 5.7 / 5.8. This zip does not change the Seedly git repo — the installer adds files to the buyer folder.
 
 ## What they get
 
@@ -39,5 +39,5 @@ Zip. Installer copies owned files, merges factory seams, and inserts marked line
 
 ## Depends on
 
-- Seedly 5.8.x (`getAuthContext` + dashboard `InitialDataProvider` + user menu)
+- Seedly 5.7.x or 5.8.x (`getAuthContext` + dashboard `InitialDataProvider` + user menu)
 - [Factory](factory.md)

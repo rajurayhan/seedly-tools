@@ -1,6 +1,6 @@
 # SeedlyPin (Seedly add-on)
 
-Install this into a licensed **Seedly 5.8.x** folder. Staff drop Pins inside the CRM. Tickets and screenshots stay in their Convex.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. Staff drop Pins inside the CRM. Tickets and screenshots stay in their Convex.
 
 This zip is not a CRM. It will not run on its own.
 

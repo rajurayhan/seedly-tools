@@ -1,6 +1,6 @@
 # HighLevel import (Seedly add-on)
 
-Install this into a licensed **Seedly 5.8.x** folder. It adds a sidebar **Import** row so a location can move a GoHighLevel book in after a dry-run review.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. It adds a sidebar **Import** row so a location can move a GoHighLevel book in after a dry-run review.
 
 This zip is not a CRM. It will not run on its own.
 

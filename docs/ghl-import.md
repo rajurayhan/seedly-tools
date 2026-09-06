@@ -6,7 +6,7 @@ A Seedly add-on that moves a GoHighLevel location into the current Seedly locati
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners leaving GoHighLevel.
+Licensed Seedly 5.7.x or 5.8.x owners leaving GoHighLevel.
 
 ## What they get
 
@@ -37,4 +37,4 @@ Zip only (`packages/ghl-import`).
 
 ## Depends on
 
-Seedly 5.8.x. Merges next to Dispatch / GoSeedly if those are installed.
+Seedly 5.7.x or 5.8.x. Merges next to Dispatch / GoSeedly if those are installed.

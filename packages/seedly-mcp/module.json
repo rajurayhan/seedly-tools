@@ -2,7 +2,7 @@
   "name": "seedly-mcp",
   "version": "0.1.0",
   "extensionApiVersion": 1,
-  "seedlyRange": ">=5.8.0 <5.9.0",
+  "seedlyRange": ">=5.7.0 <5.9.0",
   "ownedFiles": [
     "apps/web/app/(dashboard)/location/[locationId]/mcp-setup/page.tsx",
     "apps/web/app/(dashboard)/location/[locationId]/mcp-setup/_components/mcp-setup-hub.tsx",
@@ -23,6 +23,7 @@
     "apps/web/lib/seedly-mcp/subjects.ts",
     "apps/web/lib/seedly-mcp/tool-catalog.ts",
     "convex/seedlyMcp/api.ts",
+    "convex/seedlyMcp/apiRouteTypes.ts",
     "convex/seedlyMcp/crypto.ts",
     "convex/seedlyMcp/http.ts",
     "convex/seedlyMcp/identity.ts",

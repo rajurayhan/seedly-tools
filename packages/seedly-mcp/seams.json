@@ -101,12 +101,18 @@
     },
     {
       "file": "apps/web/lib/extension-subjects.ts",
-      "ifMissing": "seedly-mcp/subjects",
+      "ifMissing": "_seedlyMcp.extensionSubjects",
       "ops": [
         {
           "kind": "ensureImport",
           "code": "import * as _seedlyMcp from './seedly-mcp/subjects';",
           "marker": "seedly-mcp/subjects"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyMcp.extensionSubjects",
+          "from": "export const extensionSubjects = [] as const;",
+          "to": "export const extensionSubjects = [..._seedlyMcp.extensionSubjects] as const;"
         },
         {
           "kind": "replace",

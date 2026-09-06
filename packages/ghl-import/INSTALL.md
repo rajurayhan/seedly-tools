@@ -1,12 +1,12 @@
 # HighLevel import — install guide (for owners)
 
-This guide is for a licensed **Seedly 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
+This guide is for a licensed **Seedly 5.7 or 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
 
 This zip adds a sidebar **Import** row so a location can move a GoHighLevel book in after a dry-run review. It reads from HighLevel. It does not write back. This zip is not a CRM.
 
 ## Before you start
 
-- Seedly 5.8 is already running. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
+- Seedly 5.7 or 5.8 is already running. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
 - This add-on is unzipped (`ghl-import-0.1.0` with a `bin` folder inside).
 - You can open Terminal (Mac) or PowerShell (Windows).
 

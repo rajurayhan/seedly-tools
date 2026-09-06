@@ -6,7 +6,7 @@ An in-dashboard helper that talks to people through Seedly and **only** uses [Se
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners who want help inside the CRM after MCP already works.
+Licensed Seedly 5.7.x or 5.8.x owners who want help inside the CRM after MCP already works.
 
 ## What they get
 

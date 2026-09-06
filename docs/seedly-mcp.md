@@ -6,7 +6,7 @@ An installable MCP server the buyer points Cursor or Claude at. Tools call **the
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners who want AI tools on their own CRM.
+Licensed Seedly 5.7.x or 5.8.x owners who want AI tools on their own CRM.
 
 ## What they get
 
@@ -37,7 +37,7 @@ Zip only. Buyer-zip hosting: MCP talks to that owner’s Seedly.
 
 ## Depends on
 
-- Seedly 5.8.x and `extensionApiVersion: 1`
+- Seedly 5.7.x or 5.8.x and `extensionApiVersion: 1`
 - Empty `apiRoutes` seam if stock 5.8 shipped it empty. If the leaf does not exist at all, that is a seam gap — record it; do not patch `convex/http.ts`
 
 ## Honest note

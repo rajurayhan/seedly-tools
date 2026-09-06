@@ -1,12 +1,12 @@
 # Login as location user — install guide (for owners)
 
-This guide is for a licensed **Seedly 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
+This guide is for a licensed **Seedly 5.7 or 5.8** owner. You do not need to be a programmer. If an assistant is doing the install, give them [AGENTS.md](AGENTS.md).
 
 This zip lets an agency owner open a location as that location’s user. A banner shows who you are acting as. This zip is not a CRM.
 
 ## Before you start
 
-- Seedly 5.8 is already running. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
+- Seedly 5.7 or 5.8 is already running. You know the **Seedly folder** (`apps`, `convex`, and `package.json`).
 - This add-on is unzipped (`login-as-0.1.0` with a `bin` folder inside).
 - You can open Terminal (Mac) or PowerShell (Windows).
 

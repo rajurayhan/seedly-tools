@@ -1,6 +1,6 @@
 # Seedly Coolify (VPS self-host pack)
 
-Install this into a licensed **Seedly 5.8.x** folder. It includes the local Docker files plus a Coolify compose file so you can run Next.js and self-hosted Convex on a VPS. You do not need Convex Cloud or Vercel for this path.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. It includes the local Docker files plus a Coolify compose file so you can run Next.js and self-hosted Convex on a VPS. You do not need Convex Cloud or Vercel for this path.
 
 This zip is not a CRM. It will not run on its own.
 

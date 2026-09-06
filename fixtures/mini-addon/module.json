@@ -2,6 +2,6 @@
   "name": "mini",
   "version": "1.0.0",
   "extensionApiVersion": 1,
-  "seedlyRange": ">=5.8.0 <5.9.0",
+  "seedlyRange": ">=5.7.0 <5.9.0",
   "ownedFiles": ["packages/mini/hello.txt"]
 }

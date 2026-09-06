@@ -1,6 +1,6 @@
 # SeedlyMCP (Seedly add-on)
 
-Install this into a licensed **Seedly 5.8.x** folder. It gives Cursor, Claude Desktop, and claude.ai tools that talk to **your** Seedly `/api/v1` only. Your contact book never goes to Sulus.
+Install this into a licensed **Seedly 5.7.x or 5.8.x** folder. It gives Cursor, Claude Desktop, and claude.ai tools that talk to **your** Seedly `/api/v1` only. Your contact book never goes to Sulus.
 
 This zip is not a CRM. It will not run on its own.
 

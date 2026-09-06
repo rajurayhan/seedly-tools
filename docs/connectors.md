@@ -8,7 +8,7 @@ This is **not** a product called “OAuth.” Seedly core already connects Googl
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners who need a system Seedly does not already connect.
+Licensed Seedly 5.7.x or 5.8.x owners who need a system Seedly does not already connect.
 
 ## What they get
 

@@ -42,6 +42,8 @@ describe('SeedlyMCP Convex add-on', () => {
     expect(API).not.toContain("from '../http'");
     expect(IDENTITY).not.toContain("from '../http'");
     expect(IDENTITY_ROUTES).not.toContain("from '../http'");
+    expect(IDENTITY_ROUTES).not.toContain('../extensions/apiRoutes');
+    expect(IDENTITY_ROUTES).toContain("from './apiRouteTypes'");
   });
 
   it('ships identity fallback routes under ext/seedly-mcp with any-key scope', () => {

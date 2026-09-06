@@ -2,7 +2,7 @@
   "name": "login-as",
   "version": "0.1.0",
   "extensionApiVersion": 1,
-  "seedlyRange": ">=5.8.0 <5.9.0",
+  "seedlyRange": ">=5.7.0 <5.9.0",
   "ownedFiles": [
     "apps/web/lib/login-as/bar.tsx",
     "apps/web/lib/login-as/menu.tsx",

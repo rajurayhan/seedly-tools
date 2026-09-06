@@ -1,6 +1,6 @@
 # Install a Seedly add-on (for owners)
 
-This page is for a licensed **Seedly 5.8** owner who is not a programmer. You already have a working CRM folder. An add-on is a zip you drop into that folder. It is not a second CRM.
+This page is for a licensed **Seedly 5.7 or 5.8** owner who is not a programmer. You already have a working CRM folder. An add-on is a zip you drop into that folder. It is not a second CRM.
 
 Each zip also has its own owner guide. Start there if you already know which add-on you bought:
 
@@ -15,7 +15,7 @@ If an assistant (Cursor, Claude) is doing the typing, send them [install-agents.
 
 ## What you need
 
-- Seedly 5.8 already set up (the folder that has `apps`, `convex`, and `package.json`)
+- Seedly 5.7 or 5.8 already set up (the folder that has `apps`, `convex`, and `package.json`)
 - The unzipped add-on folder
 - A way to open Terminal (Mac) or Command Prompt / PowerShell (Windows)
 - Your usual website deploy (the same one you used when you first launched)

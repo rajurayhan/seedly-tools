@@ -35,7 +35,7 @@ Vendored into every buyer zip (`toolkit/` next to `bin/`).
 
 ## Depends on
 
-Seedly 5.8.x (`seedlyRange` and `extensionApiVersion: 1`).
+Seedly 5.7.x or 5.8.x (`seedlyRange` `>=5.7.0 <5.9.0` and `extensionApiVersion: 1`).
 
 ## Rules
 
