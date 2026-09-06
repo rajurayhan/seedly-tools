@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Pack a buyer zip. Vendors the toolkit. Never deploys.
- * Usage: node scripts/pack.mjs [ghl-import|seedly-mcp|seedly-docker|seedly-coolify|login-as]
+ * Usage: node scripts/pack.mjs [ghl-import|seedly-mcp|seedly-docker|seedly-coolify|login-as|seedly-pin]
  */
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

@@ -24,7 +24,7 @@ The add-on license does not grant a Seedly license. Zips must not include CRM co
 
 ## Marketplace and license-key server
 
-Not in this catalog. Zips and hosted Pins billing are enough for now.
+Not in this catalog. Zips are enough for now.
 
 ## Live install into our CRM to “try it”
 

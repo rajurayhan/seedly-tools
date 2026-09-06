@@ -23,6 +23,7 @@ const seedlyMcpKit = join(repoRoot, 'packages/seedly-mcp');
 const seedlyDockerKit = join(repoRoot, 'packages/seedly-docker');
 const seedlyCoolifyKit = join(repoRoot, 'packages/seedly-coolify');
 const loginAsKit = join(repoRoot, 'packages/login-as');
+const seedlyPinKit = join(repoRoot, 'packages/seedly-pin');
 const toolkitRoot = join(repoRoot, 'packages/toolkit');
 
 function silentLog() {
@@ -344,6 +345,75 @@ test('login-as reports a seam gap when getAuthContext markers are missing', asyn
       'export async function getAuthContext() { return null; }\n',
     );
     const { applyHostPatches } = await import(join(loginAsKit, 'bin/patch-host.mjs'));
+    assert.throws(
+      () => applyHostPatches(checkout, { log: silentLog() }),
+      /seam gap/,
+    );
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-pin merges seams, patches chrome, and uninstall restores them', async () => {
+  const checkout = cloneHost();
+  try {
+    runInstall({
+      kitRoot: seedlyPinKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    const { applyHostPatches, revertHostPatches } = await import(
+      join(seedlyPinKit, 'bin/patch-host.mjs')
+    );
+    applyHostPatches(checkout, { log: silentLog() });
+
+    assert.match(read(checkout, 'convex/extensions/index.ts'), /seedlyPinTables/);
+    assert.match(read(checkout, 'convex/extensions/snapshot.ts'), /seedlyPins/);
+    assert.match(read(checkout, 'apps/web/lib/extensions.ts'), /seedly-pin\/nav/);
+    assert.match(read(checkout, 'convex/extensions/apiRoutes.ts'), /seedlyPinRoutes/);
+    assert.equal(read(checkout, 'apps/web/lib/extension-plan-features.ts').includes("key: 'seedly_pin'"), false);
+    assert.match(read(checkout, 'apps/web/app/(dashboard)/layout.tsx'), /SeedlyPinFab/);
+    assert.match(read(checkout, 'apps/web/app/(dashboard)/settings/layout.tsx'), /\/settings\/pins/);
+    assert.match(read(checkout, 'docs/openapi.yaml'), /operationId: listPins/);
+    assert.match(read(checkout, 'docs/openapi.yaml'), /operationId: exportPinDiagnostics/);
+    assert.match(read(checkout, 'packages/seedly-mcp/lib/allow-map.mjs'), /list_pins/);
+    assert.equal(existsSync(join(checkout, 'convex/seedlyPin/api.ts')), true);
+    assert.equal(existsSync(join(checkout, 'convex/http.ts')), false);
+    const registry = readRegistry(checkout);
+    const entry = registry.modules.find((m) => m.name === 'seedly-pin');
+    assert.ok(entry);
+    assert.equal((entry.ownedFiles ?? []).includes('convex/http.ts'), false);
+    assert.equal((entry.ownedFiles ?? []).includes('apps/web/app/(dashboard)/layout.tsx'), false);
+
+    const doctor = runDoctor({ kitRoot: seedlyPinKit, checkout, log: silentLog() });
+    assert.equal(doctor.ok, true, doctor.checks.filter((c) => !c.ok).map((c) => c.message).join('; '));
+
+    revertHostPatches(checkout, { log: silentLog() });
+    runUninstall({ kitRoot: seedlyPinKit, checkout, yes: true });
+    assert.equal(existsSync(join(checkout, 'convex/seedlyPin/api.ts')), false);
+    assert.equal(existsSync(join(checkout, 'convex/dispatch/jobs.ts')), true);
+    assert.equal(read(checkout, 'apps/web/app/(dashboard)/layout.tsx').includes('SeedlyPinFab'), false);
+    assert.equal(read(checkout, 'apps/web/app/(dashboard)/settings/layout.tsx').includes('/settings/pins'), false);
+    assert.equal(read(checkout, 'docs/openapi.yaml').includes('listPins'), false);
+    assert.equal(read(checkout, 'packages/seedly-mcp/lib/allow-map.mjs').includes('list_pins'), false);
+    assert.match(read(checkout, 'packages/seedly-mcp/lib/allow-map.mjs'), /get_me/);
+  } finally {
+    rmSync(checkout, { recursive: true, force: true });
+  }
+});
+
+test('seedly-pin reports a seam gap when dashboard layout markers are missing', async () => {
+  const checkout = cloneHost();
+  try {
+    runInstall({
+      kitRoot: seedlyPinKit,
+      checkout,
+      skipTypecheck: true,
+      runTypecheck: false,
+    });
+    writeFileSync(join(checkout, 'apps/web/app/(dashboard)/layout.tsx'), 'export default function L() { return null; }\n');
+    const { applyHostPatches } = await import(join(seedlyPinKit, 'bin/patch-host.mjs'));
     assert.throws(
       () => applyHostPatches(checkout, { log: silentLog() }),
       /seam gap/,

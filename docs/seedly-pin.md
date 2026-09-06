@@ -2,34 +2,41 @@
 
 ## What it is
 
-Work and bug tickets for a Seedly shop, with a widget inside their dashboard. The product is Pins (hosted). The add-on is the hook.
+An installable zip. Staff drop a Pin on the page they are looking at. The ticket, screenshot, and diagnostics live in **their** Seedly Convex. Shop name: **SeedlyPin**.
 
 ## Who it is for
 
-Licensed Seedly 5.8.x owners who want tickets in the CRM, not another Notion.
+Licensed Seedly 5.8.x agencies that want in-CRM bug and work tickets. The seam host is Seedly 5.8.0. This zip does not change the Seedly git repo — the installer adds files to the buyer folder.
 
 ## What they get
 
-- A Pins project on the hosted Pins site (billing, projects, API keys)
-- A thin zip: widget mount + plan toggle
-- CSP for the widget on the host’s `extension-headers.ts` seam (zero-import). Do not hand-edit core security headers
+- A **Drop Pin** control on the dashboard. Capture includes title, description, priority, viewport screenshot, annotation, optional element pin, optional screen/video, URL, browser, console errors, failed network calls, click activity, and storage **key names** (never values)
+- Agency Settings → **Pins**: master on/off, who can drop, who can triage
+- A location sidebar **Pins** inbox (list + Kanban, assignment, notes, history)
+- REST under `/api/v1/ext/seedly-pin/*` so [SeedlyMCP](seedly-mcp.md) can list, inspect, export diagnostics, and update status. This zip does **not** ship a second MCP server
+
+Pack: `node scripts/pack.mjs seedly-pin` → `dist/seedly-pin-0.1.0.zip`.
+
+Buyer install: owners use [INSTALL.md](../packages/seedly-pin/INSTALL.md). Agents use [AGENTS.md](../packages/seedly-pin/AGENTS.md).
 
 ## What it is not
 
-- Not Pins rebuilt inside Convex
-- Not Sulus-only operator tickets
-- Not a zip that includes the Pins backend
+- Not SulusPins, `pins.sulus.ai`, `widget.js`, or a project API key
+- Not a guest widget on a public website
+- Not GitHub / Jira / Slack forwarding
+- Not session replay (rrweb)
+- Not a plan toggle under Admin → Plans
 
 ## Phase
 
-2 — after [SeedlyMCP](seedly-mcp.md) is installable. Can be scoped in parallel once Phase 1 is on the shelf.
+2 — zip. Standalone. Does not depend on hosted Pins.
 
 ## Packaging
 
-Hosted + thin zip.
+Zip. Installer copies owned files, merges factory seams, and inserts marked lines into the buyer dashboard layout and agency settings tabs. It appends OpenAPI paths and, if SeedlyMCP is already installed, pin tools on that zip’s allow-map. Uninstall reverts those lines. Missing insert points are a seam gap.
 
 ## Depends on
 
-- Hosted Pins (already running)
-- Seedly 5.8.x widget seam / dashboard layout the installer can mount
-- [Factory](factory.md) for the thin zip
+- Seedly 5.8.x (dashboard `InitialDataProvider` + agency Settings layout + `extensionApiVersion: 1`)
+- [Factory](factory.md)
+- Optional: [SeedlyMCP](seedly-mcp.md) for editor-agent tools

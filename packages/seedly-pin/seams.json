@@ -1,0 +1,230 @@
+{
+  "merges": [
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "seedlyPinTables",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { seedlyPinTables } from '../seedlyPinSchema';",
+          "marker": "from '../seedlyPinSchema'"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["...loginAsTables,", "...ghlImportTables,", "...seedlyMcpTables,", "...goseedlyTables,", "..._m0.extensionTables,"],
+          "insert": "\n  ...seedlyPinTables,",
+          "fallback": {
+            "after": "export const extensionTables = {",
+            "insert": "\n  ...seedlyPinTables,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/index.ts",
+      "ifMissing": "SeedlyPin",
+      "ops": [
+        {
+          "kind": "ensureContains",
+          "needle": "SeedlyPin",
+          "insert": "// SeedlyPin tables are merged here. Do not let any installer overwrite this file."
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/snapshot.ts",
+      "ifMissing": "'seedlyPins'",
+      "ops": [
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionPrivateTables: readonly string[] = [",
+          "insert": "\n  'seedlyPins',\n  'seedlyPinFiles',\n  'seedlyPinNotes',\n  'seedlyPinHistory',"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extensions.ts",
+      "ifMissing": "seedly-pin/nav",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyPin from './seedly-pin/nav';",
+          "marker": "seedly-pin/nav",
+          "preferAfter": "import * as _m0 from './dispatch/nav';"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavItems: ExtensionNavItem[] = [",
+          "insert": "\n  ..._seedlyPin.extensionNavItems,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionNavFeatureMap: Record<string, string> = {",
+          "insert": "\n  ..._seedlyPin.extensionNavFeatureMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionSidebarSubjectMap: Record<string, Subjects> = {",
+          "insert": "\n  ..._seedlyPin.extensionSidebarSubjectMap,"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionRoutePermissions: { path: string; subject: Subjects }[] = [",
+          "insert": "\n  ..._seedlyPin.extensionRoutePermissions,"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/lib/extension-subjects.ts",
+      "ifMissing": "seedly-pin/subjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyPin from './seedly-pin/subjects';",
+          "marker": "seedly-pin/subjects"
+        },
+        {
+          "kind": "replace",
+          "from": "export const extensionSubjects = [..._m0.extensionSubjects] as const;",
+          "to": "export const extensionSubjects = [..._m0.extensionSubjects, ..._seedlyPin.extensionSubjects] as const;"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "_seedlyPin.extensionSubjects",
+          "from": "..._m0.extensionSubjects]",
+          "to": "..._m0.extensionSubjects, ..._seedlyPin.extensionSubjects]"
+        }
+      ]
+    },
+    {
+      "file": "packages/shared/src/extensions.ts",
+      "ifMissing": "seedly-pin/src/permissions",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyPin from '../../seedly-pin/src/permissions';",
+          "marker": "seedly-pin/src/permissions"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["..._loginAs.extensionPermissionModules,", "..._seedlyMcp.extensionPermissionModules,", "..._ghlImport.extensionPermissionModules,", "..._m0.extensionPermissionModules,"],
+          "insert": "\n  ..._seedlyPin.extensionPermissionModules,",
+          "fallback": {
+            "after": "export const extensionPermissionModules: PermissionModuleDef[] = [",
+            "insert": "\n  ..._seedlyPin.extensionPermissionModules,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/subjects.ts",
+      "ifMissing": "seedlyPin/moduleSubjects",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import * as _seedlyPin from '../seedlyPin/moduleSubjects';",
+          "marker": "seedlyPin/moduleSubjects"
+        },
+        {
+          "kind": "insertAfterFirstMatch",
+          "candidates": ["..._loginAs.extensionModuleSubjects,", "..._seedlyMcp.extensionModuleSubjects,", "..._ghlImport.extensionModuleSubjects,", "..._m0.extensionModuleSubjects,"],
+          "insert": "\n  ..._seedlyPin.extensionModuleSubjects,",
+          "fallback": {
+            "after": "export const extensionModuleSubjects: Record<string, string> = {",
+            "insert": "\n  ..._seedlyPin.extensionModuleSubjects,"
+          }
+        }
+      ]
+    },
+    {
+      "file": "convex/extensions/apiRoutes.ts",
+      "ifMissing": "seedlyPinRoutes",
+      "ops": [
+        {
+          "kind": "ensureImport",
+          "code": "import { seedlyPinRoutes } from '../seedlyPin/routes';",
+          "marker": "from '../seedlyPin/routes'"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "...seedlyPinRoutes",
+          "from": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = goseedlyApiRoutes;",
+          "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...goseedlyApiRoutes,\n  ...seedlyPinRoutes,\n];"
+        },
+        {
+          "kind": "replaceIfMissing",
+          "needle": "...seedlyPinRoutes",
+          "from": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [];",
+          "to": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [\n  ...seedlyPinRoutes,\n];"
+        },
+        {
+          "kind": "insertAfter",
+          "after": "export const extensionApiRoutes: readonly ExtensionApiRoute[] = [",
+          "insert": "\n  ...seedlyPinRoutes,",
+          "skipIf": "...seedlyPinRoutes"
+        }
+      ]
+    }
+  ],
+  "uninstall": {
+    "stripLines": [
+      {
+        "file": "convex/extensions/index.ts",
+        "pattern": "seedlyPin|seedly-pin|seedly_pin|SeedlyPin"
+      },
+      {
+        "file": "convex/extensions/snapshot.ts",
+        "pattern": "seedlyPin"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "pattern": "seedly-pin|_seedlyPin"
+      },
+      {
+        "file": "apps/web/lib/extension-subjects.ts",
+        "pattern": "seedly-pin|_seedlyPin"
+      },
+      {
+        "file": "packages/shared/src/extensions.ts",
+        "pattern": "seedly-pin|_seedlyPin"
+      },
+      {
+        "file": "convex/extensions/subjects.ts",
+        "pattern": "seedlyPin|_seedlyPin"
+      },
+      {
+        "file": "convex/extensions/apiRoutes.ts",
+        "pattern": "seedlyPinRoutes|seedlyPin/routes"
+      }
+    ]
+  },
+  "doctor": {
+    "contains": [
+      {
+        "file": "convex/extensions/index.ts",
+        "needle": "seedlyPinTables",
+        "message": "extensions/index.ts spreads seedlyPinTables"
+      },
+      {
+        "file": "apps/web/lib/extensions.ts",
+        "needle": "seedly-pin/nav",
+        "message": "extensions.ts imports seedly-pin nav"
+      },
+      {
+        "file": "convex/extensions/apiRoutes.ts",
+        "needle": "seedlyPinRoutes",
+        "message": "apiRoutes.ts spreads seedlyPinRoutes"
+      },
+      {
+        "file": "apps/web/app/(dashboard)/layout.tsx",
+        "needle": "SeedlyPinFab",
+        "message": "dashboard layout mounts SeedlyPinFab"
+      },
+      {
+        "file": "apps/web/app/(dashboard)/settings/layout.tsx",
+        "needle": "/settings/pins",
+        "message": "agency settings tabs include Pins"
+      }
+    ]
+  }
+}

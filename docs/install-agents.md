@@ -12,6 +12,7 @@ SKU playbooks (prefer these when the zip is named):
 - [Seedly Docker AGENTS.md](../packages/seedly-docker/AGENTS.md)
 - [Seedly Coolify AGENTS.md](../packages/seedly-coolify/AGENTS.md)
 - [Login as location user AGENTS.md](../packages/login-as/AGENTS.md)
+- [SeedlyPin AGENTS.md](../packages/seedly-pin/AGENTS.md)
 
 ## Hard rules
 
