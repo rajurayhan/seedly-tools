@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
-import { convexSiteUrl, pinStorageUploadUrl, pinUploadToken } from '@/lib/seedly-pin/upload';
+import { convexStorageUrl, pinStorageUploadUrl, pinUploadToken } from '@/lib/seedly-pin/upload';
 
 /**
  * Same-origin hop for pin screenshots. The browser cannot POST to self-hosted
- * Convex storage (localhost:3100 → 127.0.0.1:3311 is a CORS preflight miss).
- * This route forwards the bytes server-side to /api/storage/upload.
+ * Convex storage (localhost:3100 → 127.0.0.1:3310 is a CORS preflight miss).
+ * This route forwards the bytes server-side to the Convex backend
+ * /api/storage/upload — not the .site HTTP port, which 404s that path.
  */
 export async function POST(request: Request) {
   const token = pinUploadToken(request.headers.get('x-seedly-pin-upload-token'));
-  const site = convexSiteUrl();
-  if (!token || !site) {
+  const origin = convexStorageUrl();
+  if (!token || !origin) {
     return NextResponse.json({ error: 'Missing upload token' }, { status: 400 });
   }
 
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Screenshot too large' }, { status: 413 });
   }
 
-  const upstream = await fetch(pinStorageUploadUrl(site, token), {
+  const upstream = await fetch(pinStorageUploadUrl(origin, token), {
     method: 'POST',
     headers: { 'Content-Type': contentType },
     body,

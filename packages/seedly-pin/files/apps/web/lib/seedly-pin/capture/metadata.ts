@@ -6,7 +6,7 @@ export type PinnedElement = {
   tagName?: string;
   textSnippet?: string;
   boundingRect?: { x: number; y: number; width: number; height: number };
-  captureMode?: 'element';
+  captureMode?: 'element' | 'point';
 };
 
 export type PinMetadata = {

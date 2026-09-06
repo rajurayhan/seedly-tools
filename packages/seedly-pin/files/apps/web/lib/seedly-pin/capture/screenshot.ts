@@ -46,6 +46,38 @@ function isCaptureChrome(node: Node): boolean {
   return node instanceof Element && Boolean(node.closest('[data-seedly-pin]'));
 }
 
+function isCrossOriginMedia(node: Node): boolean {
+  if (!(node instanceof Element)) return false;
+  if (node.tagName !== 'IMG' && node.tagName !== 'VIDEO' && node.tagName !== 'SOURCE') return false;
+  const src = node.getAttribute('src') || '';
+  if (!src || src.startsWith('data:') || src.startsWith('blob:')) return false;
+  try {
+    return new URL(src, window.location.href).origin !== window.location.origin;
+  } catch {
+    return true;
+  }
+}
+
+function shouldSkipCaptureNode(node: Node): boolean {
+  return isCaptureChrome(node) || isCrossOriginMedia(node);
+}
+
+function firstResolved<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return new Promise((resolve) => {
+    const timer = window.setTimeout(() => resolve(null), ms);
+    promise.then(
+      (value) => {
+        window.clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        window.clearTimeout(timer);
+        resolve(null);
+      },
+    );
+  });
+}
+
 function pageBackground(): string {
   if (typeof document === 'undefined') return '#ffffff';
   const bg = getComputedStyle(document.body).backgroundColor;
@@ -133,15 +165,18 @@ export async function captureViewport(): Promise<CaptureBlob | null> {
   const toBlob = await loadToBlob();
   if (toBlob) {
     try {
-      const blob = await toBlob(document.body, {
-        width,
-        height,
-        pixelRatio: 1,
-        cacheBust: true,
-        skipFonts: true,
-        backgroundColor: pageBackground(),
-        filter: (node: Node) => !isCaptureChrome(node),
-      });
+      const blob = await firstResolved(
+        toBlob(document.body, {
+          width,
+          height,
+          pixelRatio: 1,
+          cacheBust: true,
+          skipFonts: true,
+          backgroundColor: pageBackground(),
+          filter: (node: Node) => !shouldSkipCaptureNode(node),
+        }),
+        4000,
+      );
       if (blob) {
         return {
           blob,

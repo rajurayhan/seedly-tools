@@ -139,6 +139,19 @@ test('FAB stays hidden unless canDrop; overlay captures collectors', () => {
   assert.match(fab, /canDrop/);
   assert.match(fab, /SeedlyPinOverlay/);
   assert.match(fab, /!open &&/);
+  assert.match(fab, /<Bug /);
+  assert.equal(fab.includes('MapPin'), false);
+  assert.match(fab, /seedly-pin-fab-position/);
+  assert.match(fab, /onPointerDown/);
+  assert.match(fab, /skipClick/);
+  assert.match(fab, /setOpen\(true\)/);
+  assert.match(fab, /clampFabPosition/);
+  assert.match(fab, /DRAG_THRESHOLD/);
+  assert.match(fab, /cursor-pointer/);
+  assert.match(fab, /Hide pin button/);
+  assert.match(fab, /Show pin button/);
+  assert.match(fab, /fab-tab/);
+  assert.match(fab, /fab-hide/);
   const overlay = readOwned('apps/web/lib/seedly-pin/overlay.tsx');
   assert.match(overlay, /createCaptureSession/);
   assert.match(overlay, /captureViewportWithPin/);
@@ -161,9 +174,43 @@ test('screenshot upload stays same-origin so Docker Convex CORS cannot block it'
   assert.match(route, /x-seedly-pin-upload-token/);
   const upload = readOwned('apps/web/lib/seedly-pin/upload.ts');
   assert.match(upload, /pinUploadToken/);
+  assert.match(upload, /convexStorageUrl/);
+  assert.match(upload, /CONVEX_URL/);
+  assert.match(upload, /NEXT_PUBLIC_CONVEX_URL/);
   const moduleJson = JSON.parse(readFileSync(join(kitRoot, 'module.json'), 'utf8'));
   assert.ok(moduleJson.ownedFiles.includes('apps/web/app/api/seedly-pin/upload/route.ts'));
   assert.ok(moduleJson.ownedFiles.includes('apps/web/lib/seedly-pin/upload.ts'));
+});
+
+test('pin detail loads screenshots through the same-origin file proxy', () => {
+  const fileRoute = readOwned('apps/web/app/api/seedly-pin/file/route.ts');
+  assert.match(fileRoute, /pinStorageReadUrl/);
+  assert.match(fileRoute, /export async function GET/);
+  const upload = readOwned('apps/web/lib/seedly-pin/upload.ts');
+  assert.match(upload, /pinStorageReadUrl/);
+  assert.match(upload, /pinStoragePath/);
+  assert.match(upload, /\/api\/storage\//);
+  assert.match(upload, /pinFileProxySrc/);
+  const inbox = readOwned('apps/web/lib/seedly-pin/inbox.tsx');
+  assert.match(inbox, /pinFileProxySrc/);
+  assert.equal(inbox.includes('screenshot?.url'), false);
+  const moduleJson = JSON.parse(readFileSync(join(kitRoot, 'module.json'), 'utf8'));
+  assert.ok(moduleJson.ownedFiles.includes('apps/web/app/api/seedly-pin/file/route.ts'));
+});
+
+test('pin detail shows element and collapsible diagnostics', () => {
+  const inbox = readOwned('apps/web/lib/seedly-pin/inbox.tsx');
+  assert.match(inbox, /CardTitle className="text-sm">Element/);
+  assert.match(inbox, /No element was stored with this pin/);
+  assert.match(inbox, /DiagnosticSection title="Console"/);
+  assert.match(inbox, /DiagnosticSection title="Network"/);
+  assert.match(inbox, /DiagnosticSection title="Activity"/);
+  assert.match(inbox, /<details/);
+  assert.equal(inbox.includes('.slice(0, 12)'), false);
+  const overlay = readOwned('apps/web/lib/seedly-pin/overlay.tsx');
+  assert.match(overlay, /describeAtPoint/);
+  const picker = readOwned('apps/web/lib/seedly-pin/capture/element.ts');
+  assert.match(picker, /export function describeAtPoint/);
 });
 
 test('annotate commits a snapshot so a cleared draft cannot paint null', () => {
@@ -182,11 +229,26 @@ test('viewport capture uses html-to-image and stamps the pin, never SVG foreignO
   assert.match(shot, /drawPinMarker/);
   assert.match(shot, /stampPinOnCapture/);
   assert.match(shot, /canvasToPng/);
+  assert.match(shot, /isCrossOriginMedia/);
+  assert.match(shot, /shouldSkipCaptureNode/);
   assert.match(shot, /catch \{/);
   const picker = readOwned('apps/web/lib/seedly-pin/capture/element.ts');
   assert.match(picker, /elementsFromPoint/);
   assert.match(picker, /pickPinPoint/);
+  assert.match(picker, /stopImmediatePropagation/);
+  assert.match(picker, /pointerdown/);
   assert.match(picker, /Click an element to pin/);
+  assert.match(picker, /describeAtPoint/);
+});
+
+test('pin inbox uses the shared DataTable, not a hand-rolled table', () => {
+  const inbox = readOwned('apps/web/lib/seedly-pin/inbox.tsx');
+  assert.match(inbox, /ListPageLayout/);
+  assert.match(inbox, /DataTable/);
+  assert.match(inbox, /tableLabel="Pins"/);
+  assert.equal(inbox.includes('<table'), false);
+  const page = readOwned('apps/web/app/(dashboard)/location/[locationId]/pins/page.tsx');
+  assert.equal(page.includes('p-6'), false);
 });
 
 test('settings panel uses the CRM settings chrome', () => {

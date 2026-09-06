@@ -7,7 +7,7 @@ import { Camera, MousePointer2, X } from 'lucide-react';
 import { Button, Input, Label, Textarea, toast } from '@seedly-crm/ui';
 import { AnnotateCanvas, isAnnotateShape, type AnnotateShape } from './capture/annotate';
 import { createCaptureSession } from './capture/collectors';
-import { pickElement, pickPinPoint, pinPointForElement } from './capture/element';
+import { describeAtPoint, pickElement, pickPinPoint, pinPointForElement } from './capture/element';
 import { capturePageMetadata, type PinnedElement } from './capture/metadata';
 import {
   captureViewport,
@@ -87,6 +87,7 @@ export function SeedlyPinOverlay({ open, onClose }: Props) {
         return;
       }
       setPinPoint(point);
+      setElement(describeAtPoint(point.x, point.y));
       setPhase('capturing');
       await afterPaint();
       if (cancelled) return;
@@ -132,7 +133,11 @@ export function SeedlyPinOverlay({ open, onClose }: Props) {
       body,
     });
     if (!res.ok) {
-      throw new Error(`Screenshot upload failed (${res.status}). Try a smaller capture.`);
+      throw new Error(
+        res.status === 413
+          ? 'Screenshot is too large. Try a smaller capture.'
+          : `Screenshot upload failed (${res.status}).`,
+      );
     }
     const json = (await res.json()) as { storageId?: string };
     if (!json.storageId) throw new Error('Screenshot upload did not return a file id.');

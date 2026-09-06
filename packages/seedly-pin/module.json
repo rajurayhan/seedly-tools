@@ -7,6 +7,7 @@
     "apps/web/app/(dashboard)/location/[locationId]/pins/[pinId]/page.tsx",
     "apps/web/app/(dashboard)/location/[locationId]/pins/page.tsx",
     "apps/web/app/(dashboard)/settings/pins/page.tsx",
+    "apps/web/app/api/seedly-pin/file/route.ts",
     "apps/web/app/api/seedly-pin/upload/route.ts",
     "apps/web/lib/seedly-pin/capture/annotate.tsx",
     "apps/web/lib/seedly-pin/capture/collectors.ts",

@@ -42,3 +42,29 @@ test('MCP installer re-adopts SeedlyPin tools when the bridge is on the host', (
   assert.match(install, /applyPinMcpBridge/);
   assert.match(install, /adoptInstalledPin/);
 });
+
+test('MCP setup lists use the shared DataTable, not a hand-rolled table', () => {
+  const hub = readFileSync(
+    join(kit, 'files/apps/web/app/(dashboard)/location/[locationId]/mcp-setup/_components/mcp-setup-hub.tsx'),
+    'utf8',
+  );
+  const catalog = readFileSync(
+    join(kit, 'files/apps/web/app/(dashboard)/location/[locationId]/mcp-setup/_components/mcp-tool-catalog.tsx'),
+    'utf8',
+  );
+  const page = readFileSync(
+    join(kit, 'files/apps/web/app/(dashboard)/location/[locationId]/mcp-setup/page.tsx'),
+    'utf8',
+  );
+  assert.match(hub, /ListPageLayout/);
+  assert.match(hub, /DataTable/);
+  assert.match(hub, /CopyButton/);
+  assert.match(hub, /Copy local snippet/);
+  assert.match(hub, /Copy live snippet/);
+  assert.match(hub, /Copy MCP URL/);
+  assert.match(catalog, /DataTable/);
+  assert.match(catalog, /CopyButton/);
+  assert.equal(hub.includes('<table'), false);
+  assert.equal(catalog.includes('<table'), false);
+  assert.equal(page.includes('p-6'), false);
+});

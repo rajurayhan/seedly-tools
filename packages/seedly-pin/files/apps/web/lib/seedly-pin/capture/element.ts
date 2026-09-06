@@ -19,7 +19,7 @@ export function cssSelectorFor(el: Element): string {
   return parts.join(' > ');
 }
 
-export function describeElement(el: Element): PinnedElement {
+export function describeElement(el: Element, captureMode: PinnedElement['captureMode'] = 'element'): PinnedElement {
   const rect = el.getBoundingClientRect();
   return {
     cssSelector: cssSelectorFor(el),
@@ -27,8 +27,13 @@ export function describeElement(el: Element): PinnedElement {
     tagName: el.tagName.toLowerCase(),
     textSnippet: (el.textContent ?? '').trim().slice(0, 120) || undefined,
     boundingRect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-    captureMode: 'element',
+    captureMode,
   };
+}
+
+export function describeAtPoint(x: number, y: number): PinnedElement | null {
+  const el = targetFromPoint(x, y);
+  return el ? describeElement(el, 'point') : null;
 }
 
 function targetFromPoint(x: number, y: number): Element | null {
@@ -67,6 +72,7 @@ export function pickElement(): Promise<PinnedElement | null> {
 
     const finish = (value: PinnedElement | null) => {
       document.removeEventListener('mousemove', move, true);
+      document.removeEventListener('pointerdown', click, true);
       document.removeEventListener('click', click, true);
       document.removeEventListener('keydown', key, true);
       highlight.remove();
@@ -77,6 +83,7 @@ export function pickElement(): Promise<PinnedElement | null> {
     const click = (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation();
       const el = targetFromPoint(event.clientX, event.clientY);
       finish(el ? describeElement(el) : null);
     };
@@ -86,6 +93,7 @@ export function pickElement(): Promise<PinnedElement | null> {
     };
 
     document.addEventListener('mousemove', move, true);
+    document.addEventListener('pointerdown', click, true);
     document.addEventListener('click', click, true);
     document.addEventListener('keydown', key, true);
   });
@@ -111,6 +119,7 @@ export function pickPinPoint(): Promise<{ x: number; y: number } | null> {
 
     const finish = (value: { x: number; y: number } | null) => {
       document.removeEventListener('mousemove', move, true);
+      document.removeEventListener('pointerdown', click, true);
       document.removeEventListener('click', click, true);
       document.removeEventListener('keydown', key, true);
       document.body.style.cursor = previousCursor;
@@ -122,6 +131,7 @@ export function pickPinPoint(): Promise<{ x: number; y: number } | null> {
     const click = (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation();
       finish({ x: event.clientX, y: event.clientY });
     };
 
@@ -130,6 +140,7 @@ export function pickPinPoint(): Promise<{ x: number; y: number } | null> {
     };
 
     document.addEventListener('mousemove', move, true);
+    document.addEventListener('pointerdown', click, true);
     document.addEventListener('click', click, true);
     document.addEventListener('keydown', key, true);
   });
